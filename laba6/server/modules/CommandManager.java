@@ -179,6 +179,7 @@ public class CommandManager {
      * @return Command exit status.
      */
     public boolean exit(String stringArgument, Object objectArgument) {
+        saveCommand.execute(stringArgument, objectArgument);
         return exitCommand.execute(stringArgument, objectArgument);
     }
 

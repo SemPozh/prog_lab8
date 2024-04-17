@@ -69,7 +69,8 @@ public class Client {
     private void connectToServer() throws ConnectionErrorException, NotInDeclaredLimitsException {
         try {
             if (reconnectionAttempts >= 1) System.out.println("Reconnecting to the server...");
-            socketChannel = SocketChannel.open(new InetSocketAddress(host, port));
+            InetSocketAddress inetSocketAddress = new InetSocketAddress(host, port);
+            socketChannel = SocketChannel.open(inetSocketAddress);
             System.out.println("The connection to the server was successfully established.");
             System.out.println("Waiting for permission to share data...");
             serverWriter = new ObjectOutputStream(socketChannel.socket().getOutputStream());
@@ -99,6 +100,7 @@ public class Client {
                 serverResponse = (Response) serverReader.readObject();
                 System.out.println(serverResponse.getResponseBody());
             } catch (InvalidClassException | NotSerializableException exception) {
+                System.out.println(exception);
                 System.out.println("An error occurred while sending data to the server!");
             } catch (ClassNotFoundException exception) {
                 System.out.println("An error occurred while reading received data!");

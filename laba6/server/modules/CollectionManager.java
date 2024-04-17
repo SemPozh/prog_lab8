@@ -43,12 +43,16 @@ public class CollectionManager {
     }
 
 
-    public void insertAt(Integer index, Organization el){
-        organizationCollection.insertElementAt(el, index);
+    public void insertAt(Integer index, Organization el) throws IndexOutOfBoundsException{
+        try {
+            organizationCollection.insertElementAt(el, index);
+        } catch (IndexOutOfBoundsException e){
+            throw new IndexOutOfBoundsException("Index must be in [0; "+organizationCollection.size()+"]");
+        }
     }
 
     public String getAllAnnualTurnovers(){
-        return organizationCollection.stream().reduce("", (s, p)->s += String.valueOf(p.getAnnualTurnover()) + "\n", String::concat);
+        return organizationCollection.stream().reduce("", (s, p)->s += String.valueOf(p.getAnnualTurnover()==null? "" : p.getAnnualTurnover()+"\n"), String::concat);
     }
 
 
@@ -152,7 +156,8 @@ public class CollectionManager {
 
     public double getAvgOfAnnualTurnover(){
         return organizationCollection.stream()
-                .reduce(0.0, (sum, p) -> sum += p.getAnnualTurnover(), Double::sum)/collectionSize();
+                .reduce(0.0, (sum, p) -> sum += (p.getAnnualTurnover()==null ? 0 : p.getAnnualTurnover()), Double::sum)/(organizationCollection.stream()
+                .reduce(0, (count, p) -> count += (p.getAnnualTurnover()==null ? 0 : 1), Integer::sum));
     }
 
     /**

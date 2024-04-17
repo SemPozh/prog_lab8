@@ -2,7 +2,9 @@ package laba6.common.data;
 
 import laba6.common.exeptions.InvalidObjectFieldException;
 
-public class Coordinates {
+import java.io.Serializable;
+
+public class Coordinates implements Serializable {
     private Integer x;
     private double y;
     public static final int MAX_Y = 518;

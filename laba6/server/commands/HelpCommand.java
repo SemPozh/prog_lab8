@@ -27,9 +27,8 @@ public class HelpCommand extends AbstractCommand {
             ResponseOutputer.appendln("add - add element in the collection");
             ResponseOutputer.appendln("update id - update element with id");
             ResponseOutputer.appendln("clear - clear collection");
-            ResponseOutputer.appendln("save - save all changes");
             ResponseOutputer.appendln("execute_script file_name - execute script from file");
-            ResponseOutputer.appendln("exit - close program");
+            ResponseOutputer.appendln("exit - close program, saves collection");
             ResponseOutputer.appendln("insert_at index - insert object in collection on index=index");
             ResponseOutputer.appendln("add_if_max - add element if it max");
             ResponseOutputer.appendln("reorder - reverse order of the collection");

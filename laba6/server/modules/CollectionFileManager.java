@@ -13,10 +13,10 @@ import java.util.Scanner;
 import java.util.Stack;
 
 public class CollectionFileManager {
-    private String envVariable;
+    private String fileName;
 
-    public CollectionFileManager(String envVariable) {
-        this.envVariable = envVariable;
+    public CollectionFileManager(String fileName) {
+        this.fileName = fileName;
     }
 
     /**
@@ -25,14 +25,14 @@ public class CollectionFileManager {
      * @param collection Collection to write.
      */
     public void writeCollection(Stack<Organization> collection) {
-        if (System.getenv().get(envVariable) != null) {
-            try (FileWriter collectionFileWriter = new FileWriter(new File(System.getenv().get(envVariable)))) {
+        if (fileName != null) {
+            try (FileWriter collectionFileWriter = new FileWriter(new File(fileName))) {
                 collectionFileWriter.write(CSVParser.toCSV(collection));
                 ResponseOutputer.appendln("The collection was successfully saved to a file.");
             } catch (IOException exception) {
                 ResponseOutputer.appenderror("The download file is a directory/cannot be opened!");
             }
-        } else ResponseOutputer.appenderror("System variable with boot file not found!");
+        } else ResponseOutputer.appenderror("Argument with boot file not initialized!");
     }
 
     /**
@@ -41,8 +41,8 @@ public class CollectionFileManager {
      * @return Readed collection.
      */
     public Stack<Organization> readCollection() {
-        if (System.getenv().get(envVariable) != null) {
-            try (Scanner collectionFileScanner = new Scanner(new File(System.getenv().get(envVariable)))) {
+        if (fileName != null) {
+            try (Scanner collectionFileScanner = new Scanner(new File(fileName))) {
                 Stack<Organization> collection = new Stack<>();
                 while (collectionFileScanner.hasNextLine()){
                     collection.add(CSVParser.parseCSVString(collectionFileScanner.nextLine().trim()));
@@ -57,6 +57,7 @@ public class CollectionFileManager {
                 System.out.println("The download file is empty!");
 //                App.logger.error("Загрузочный файл пуст!");
             } catch (InvalidObjectFieldException | NullPointerException exception) {
+                System.out.println(exception);
                 System.out.println("An incorrect collection was detected in the loading file!");
 //                App.logger.error("В загрузочном файле обнаружена некорректная коллекция!");
             } catch (IllegalStateException exception) {
@@ -65,7 +66,7 @@ public class CollectionFileManager {
                 System.exit(0);
             }
         }
-        else System.out.println("System variable with boot file not found!");
+        else System.out.println("Argument with boot file not initialized!");
         return new Stack<>();
     }
 }

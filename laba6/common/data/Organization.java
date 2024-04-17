@@ -45,10 +45,12 @@ public class Organization implements Comparable, Serializable {
     }
 
     public void setAnnualTurnover(Integer annualTurnover) throws InvalidObjectFieldException {
-        if (annualTurnover > 0){
-            this.annualTurnover = annualTurnover;
-        } else {
-            throw new InvalidObjectFieldException("Field annual turnover must be positive");
+        if (annualTurnover!=null){
+            if (annualTurnover > 0){
+                this.annualTurnover = annualTurnover;
+            } else {
+                throw new InvalidObjectFieldException("Field annual turnover must be positive");
+            }
         }
     }
 

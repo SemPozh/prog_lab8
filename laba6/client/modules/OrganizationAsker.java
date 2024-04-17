@@ -110,7 +110,7 @@ public class OrganizationAsker {
         while (true) {
             try {
                 System.out.println("Enter Y coordinate <= " + (Coordinates.MAX_Y) + ":");
-                System.out.println(App.SYMBOL2);
+                System.out.print(App.SYMBOL2);
                 strY = inputHandler.readLine().trim();
                 if (fileMode) System.out.println(strY);
                 YCoordinateValidator yCoordinateValidator = new YCoordinateValidator();
@@ -193,15 +193,15 @@ public class OrganizationAsker {
         Integer employeesCount;
         while (true) {
             try {
-                System.out.println("Enter annual turnover/RUB, > 0:");
+                System.out.println("Enter employees count, > 0:");
                 System.out.print(App.SYMBOL2);
                 strEmployeesCount = inputHandler.readLine().trim();
                 if (fileMode) System.out.println(strEmployeesCount);
-                AnnualTurnoverValidator annualTurnoverValidator = new AnnualTurnoverValidator();
-                employeesCount = annualTurnoverValidator.validate(strEmployeesCount);
+                EmployeeCountValidator employeeCountValidator = new EmployeeCountValidator();
+                employeesCount = employeeCountValidator.validate(strEmployeesCount);
                 break;
             } catch (NoSuchElementException exception) {
-                System.out.println("Health not recognized!");
+                System.out.println("Employees count not recognized!");
                 if (fileMode) throw new IncorrectInputInScriptException();
             } catch (NullPointerException | IllegalStateException exception) {
                 System.out.println("Unexpected error!");
@@ -226,14 +226,14 @@ public class OrganizationAsker {
         while (true) {
             try {
                 System.out.println("Enter organization type:");
-                System.out.println(App.SYMBOL2);
+                System.out.print(App.SYMBOL2);
                 strOrganizationType = inputHandler.readLine().trim();
                 OrganizationTypeValidator organizationTypeValidator = new OrganizationTypeValidator();
                 organizationType = organizationTypeValidator.validate(strOrganizationType);
                 if (fileMode) System.out.println(strOrganizationType);
                 break;
             } catch (NoSuchElementException exception) {
-                System.out.println("Weapon not recognized!");
+                System.out.println("Organization not recognized!");
                 if (fileMode) throw new IncorrectInputInScriptException();
             } catch (IllegalStateException exception) {
                 System.out.println("Unexpected error!");
@@ -257,16 +257,13 @@ public class OrganizationAsker {
         Address address;
         while (true) {
             try {
-                System.out.println("Enter the melee weapon:");
-                System.out.println(App.SYMBOL2);
+                System.out.println("Enter the zip code:");
+                System.out.print(App.SYMBOL2);
                 zipCode = inputHandler.readLine().trim();
                 if (fileMode) System.out.println(zipCode);
                 ZipCodeValidator zipCodeValidator = new ZipCodeValidator();
                 address = zipCodeValidator.validate(zipCode);
                 break;
-            } catch (NoSuchElementException exception) {
-                System.out.println("Weapon not recognized!");
-                if (fileMode) throw new IncorrectInputInScriptException();
             } catch (IllegalStateException exception) {
                 System.out.println("Unexpected error!");
                 System.exit(0);

@@ -11,10 +11,12 @@ import laba6.common.interaction.ResponseCode;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Stack;
 
 public class UserHandler {
+    private final int maxRewriteAttempts = 1;
     private InputHandler inputHandler;
     private Stack<File> scriptStack = new Stack<>();
     private Stack<InputHandler> scannerStack = new Stack<>();
@@ -29,62 +31,84 @@ public class UserHandler {
      * @param serverResponseCode Last server's response code.
      * @return New request to server.
      */
-    public Request handle(ResponseCode serverResponseCode){
+    public Request handle(ResponseCode serverResponseCode) {
         String userInput;
         String[] userCommand;
         ProcessingCode processingCode;
-        do{
-            if (fileMode()){
-                userInput = inputHandler.readLine();
-                if (!userInput.isEmpty()){
-                    System.out.print(App.SYMBOL1);
-                    System.out.println(userInput);
+        int rewriteAttempts = 0;
+        try {
+            do {
+                try {
+                    if (fileMode() && (serverResponseCode == ResponseCode.ERROR ||
+                            serverResponseCode == ResponseCode.SERVER_EXIT))
+                        throw new IncorrectInputInScriptException();
+                    while (fileMode() && !inputHandler.scanner.hasNextLine()) {
+                        inputHandler.close();
+                        inputHandler = scannerStack.pop();
+                        System.out.println("Back to script '" + scriptStack.pop().getName() + "'...");
+                    }
+                    if (fileMode()) {
+                        userInput = inputHandler.readLine();
+                        if (!userInput.isEmpty()) {
+                            System.out.print(App.SYMBOL1);
+                            System.out.println(userInput);
+                        }
+                    } else {
+                        System.out.print(App.SYMBOL1);
+                        userInput = inputHandler.readLine();
+                    }
+                    userCommand = (userInput.trim() + " ").split(" ", 2);
+                    userCommand[1] = userCommand[1].trim();
+                } catch (NoSuchElementException | IllegalStateException exception) {
+                    System.out.println();
+                    System.out.println("Error while typing command");
+                    userCommand = new String[]{"", ""};
+                    rewriteAttempts++;
+                    if (rewriteAttempts >= maxRewriteAttempts) {
+                        System.out.println("Maximum attempts is accepted!");
+                        System.exit(0);
+                    }
                 }
-            } else {
-                System.out.print(App.SYMBOL1);
-                userInput = inputHandler.readLine();
-            }
-            userCommand = (userInput.trim() + " ").split(" ", 2);
-            userCommand[1] = userCommand[1].trim();
-            processingCode = processCommand(userCommand[0], userCommand[1]);
-        } while (processingCode==ProcessingCode.ERROR && !fileMode() || userCommand[0].isEmpty());
-        try{
-            if (fileMode() && (serverResponseCode == ResponseCode.ERROR || processingCode == ProcessingCode.ERROR)){
+                processingCode = processCommand(userCommand[0], userCommand[1]);
+            } while (processingCode == ProcessingCode.ERROR && !fileMode() || userCommand[0].isEmpty());
+            try {
+                if (fileMode() && (serverResponseCode == ResponseCode.ERROR || processingCode == ProcessingCode.ERROR))
+                    throw new IncorrectInputInScriptException();
+                switch (processingCode) {
+                    case OBJECT:
+                        Organization organizationAddRaw = generateOrganizationAdd();
+                        return new Request(userCommand[0], userCommand[1], organizationAddRaw);
+                    case SCRIPT:
+                        File scriptFile = new File(userCommand[1]);
+                        if (!scriptFile.exists()) throw new FileNotFoundException();
+                        if (!scriptStack.isEmpty() && scriptStack.search(scriptFile) != -1)
+                            throw new ScriptRecursionException();
+                        scannerStack.push(inputHandler);
+                        scriptStack.push(scriptFile);
+                        inputHandler = new InputHandler(new Scanner(scriptFile));
+                        System.out.println("Execute script '" + scriptFile.getName() + "'...");
+                        break;
+                }
+            } catch (FileNotFoundException exception) {
+                System.out.println("File with script not found!");
+            } catch (ScriptRecursionException exception) {
+                System.out.println("Scripts can't be executed with recursion!");
                 throw new IncorrectInputInScriptException();
+            } catch (InvalidObjectFieldException e) {
+                System.out.println("Invalid data!");
             }
-            switch (processingCode) {
-                case OBJECT:
-                    Organization marineAddRaw = generateOrganizationAdd();
-                    return new Request(userCommand[0], userCommand[1], marineAddRaw);
-                case SCRIPT:
-                    File scriptFile = new File(userCommand[1]);
-                    if (!scriptFile.exists()) throw new FileNotFoundException();
-                    if (!scriptStack.isEmpty() && scriptStack.search(scriptFile) != -1)
-                        throw new ScriptRecursionException();
-                    scannerStack.push(inputHandler);
-                    scriptStack.push(scriptFile);
-                    inputHandler = new InputHandler(new Scanner(scriptFile));
-                    System.out.println("I'm executing a script '" + scriptFile.getName() + "'...");
-                    break;
-            }
-        } catch (IncorrectInputInScriptException exception){
-            System.out.println("Script execution was interrupted!");
+        } catch (IncorrectInputInScriptException exception) {
+            System.out.println("Executing stopped!");
             while (!scannerStack.isEmpty()) {
                 inputHandler.close();
                 inputHandler = scannerStack.pop();
             }
             scriptStack.clear();
             return new Request();
-        } catch (InvalidObjectFieldException e){
-            System.out.println(e.getMessage());
-            return new Request();
-        } catch (FileNotFoundException e) {
-            System.out.println("Script file not found!");
-        } catch (ScriptRecursionException e) {
-            throw new RuntimeException(e);
         }
         return new Request(userCommand[0], userCommand[1]);
     }
+
 
     public boolean fileMode(){
         return !scriptStack.isEmpty();
@@ -121,7 +145,7 @@ public class UserHandler {
                     return ProcessingCode.SCRIPT;
                 case "insert_at":
                     if (commandArgument.isEmpty()) throw new CommandUsageException("<index>");
-                    break;
+                    return ProcessingCode.OBJECT;
                 default:
                     System.out.println("Command '" + command + "' not found. Type 'help' for help.");
                     return ProcessingCode.ERROR;

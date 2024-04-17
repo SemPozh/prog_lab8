@@ -36,7 +36,7 @@ public class CSVParser {
 
         Coordinates coordinates = new Coordinates(xCoordinateValidator.validate(arr[2]), yCoordinateValidator.validate(arr[3]));
         Address address = zipCodeValidator.validate(arr[8]);
-        Integer annualTurnover = annualTurnoverValidator.validate(arr[3]);
+        Integer annualTurnover = annualTurnoverValidator.validate(arr[5]);
         Organization organization;
         organization = new Organization(idValidator.validate(arr[0]), nameValidator.validate(arr[1]), coordinates, creationDateValidator.validate(arr[4]), annualTurnover, employeesCountValidator.validate(arr[6]), organizationTypeValidator.validate(arr[7]), address);
         return organization;
