@@ -80,6 +80,7 @@ public class Client {
             System.out.println("The server address was entered incorrectly!");
             throw new NotInDeclaredLimitsException();
         } catch (IOException exception) {
+            System.out.println(exception);
             System.out.println("An error occurred while connecting to the server!");
             throw new ConnectionErrorException();
         }

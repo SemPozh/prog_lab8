@@ -37,24 +37,30 @@ public class Server {
                     break;
                 } catch (IOException exception) {
                     System.out.println("An error occurred while trying to terminate the connection to the client!");
+                    App.logger.severe("An error occurred while trying to terminate the connection to the client!");
                 }
             }
             stop();
         } catch (OpeningServerSocketException exception) {
             System.out.println("The server cannot be started!");
+            App.logger.severe("The server cannot be started!");
         }
     }
 
     private void stop() {
         try {
             System.out.println("Shutting down the server...");
+            App.logger.info("Shutting down the server...");
             if (serverSocket == null) throw new ClosingSocketException();
             serverSocket.close();
             System.out.println("The server has completed successfully.");
+            App.logger.finest("The server has completed successfully.");
         } catch (ClosingSocketException exception) {
             System.out.println("It is impossible to shut down a server that has not yet started!");
+            App.logger.warning("It is impossible to shut down a server that has not yet started!");
         } catch (IOException exception) {
             System.out.println("An error occurred while shutting down the server!");
+            App.logger.severe("An error occurred while shutting down the server!");
         }
     }
 
@@ -67,6 +73,7 @@ public class Server {
             throw new OpeningServerSocketException();
         } catch (IOException exception) {
             System.out.println("An error occurred while trying to use the port '" + port + "'!");
+            App.logger.severe("An error occurred while trying to use the port '" + port + "'!");
             throw new OpeningServerSocketException();
         }
     }
@@ -101,13 +108,17 @@ public class Server {
             return false;
         } catch (ClassNotFoundException exception) {
             System.out.println("An error occurred while reading received data!");
+            App.logger.severe("An error occurred while reading received data!");
         } catch (InvalidClassException | NotSerializableException exception) {
             System.out.println("An error occurred while sending data to the client!");
+            App.logger.severe("An error occurred while sending data to the client!");
         } catch (IOException exception) {
             if (userRequest == null) {
                 System.out.println("Unexpected connection loss with the client!");
+                App.logger.info("Unexpected connection loss with the client!");
             } else {
                 System.out.println("The client has been successfully disconnected from the server!");
+                App.logger.finest("The client has been successfully disconnected from the server!");
             }
         }
         return true;

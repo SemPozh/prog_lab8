@@ -2,6 +2,7 @@ package laba6.server.modules;
 
 import laba6.common.data.Organization;
 import laba6.common.exeptions.InvalidObjectFieldException;
+import laba6.server.App;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -48,21 +49,22 @@ public class CollectionFileManager {
                     collection.add(CSVParser.parseCSVString(collectionFileScanner.nextLine().trim()));
                 }
                 System.out.println("The collection has been successfully loaded.");
-//                App.logger.info("Коллекция успешно загружена.");
+                App.logger.info("The collection has been successfully loaded.");
                 return collection;
             } catch (FileNotFoundException exception) {
                 System.out.println("Boot file not found!");
-//                App.logger.warn("Загрузочный файл не найден!");
+                App.logger.warning("Boot file not found!");
             } catch (NoSuchElementException exception) {
                 System.out.println("The download file is empty!");
-//                App.logger.error("Загрузочный файл пуст!");
+                App.logger.warning("Boot file not found!");
+
             } catch (InvalidObjectFieldException | NullPointerException exception) {
                 System.out.println(exception);
                 System.out.println("An incorrect collection was detected in the loading file!");
-//                App.logger.error("В загрузочном файле обнаружена некорректная коллекция!");
+                App.logger.severe("An incorrect collection was detected in the loading file!");
             } catch (IllegalStateException exception) {
                 System.out.println("Unexpected error!");
-//                App.logger.fatal("Непредвиденная ошибка!");
+                App.logger.severe("Unexpected error!");
                 System.exit(0);
             }
         }
