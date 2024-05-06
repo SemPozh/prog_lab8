@@ -39,7 +39,7 @@ public class App {
             CollectionFileManager collectionFileManager = new CollectionFileManager(fileName);
             CollectionManager collectionManager = new CollectionManager(collectionFileManager);
             CommandManager commandManager = new CommandManager(
-                    new HelpCommand(),
+                    new HelpCommand(collectionManager),
                     new InfoCommand(collectionManager),
                     new ShowCommand(collectionManager),
                     new AddCommand(collectionManager),
@@ -47,7 +47,7 @@ public class App {
                     new RemoveByIdCommand(collectionManager),
                     new ClearCommand(collectionManager),
                     new SaveCommand(collectionManager),
-                    new ExitCommand(),
+                    new ExitCommand(collectionManager),
                     new ExecuteScriptCommand(),
                     new AddIfMaxCommand(collectionManager),
                     new ReorderCommand(collectionManager),
@@ -57,7 +57,7 @@ public class App {
                     new InsertAtCommand(collectionManager),
                     new ServerExitCommand()
             );
-            RequestHandler requestHandler = new RequestHandler(commandManager);
+            RequestHandler requestHandler = new RequestHandler(commandManager, collectionManager);
             Server server = new Server(PORT, CONNECTION_TIMEOUT, requestHandler);
             server.run();
         } else {

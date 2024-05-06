@@ -75,6 +75,7 @@ public class CommandManager {
         commands.add(serverExitCommand);
     }
 
+
     /**
      * @return List of manager's commands.
      */

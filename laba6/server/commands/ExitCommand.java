@@ -1,5 +1,6 @@
 package laba6.server.commands;
 import laba6.common.exeptions.WrongAmountOfElementsException;
+import laba6.server.modules.CollectionManager;
 import laba6.server.modules.ResponseOutputer;
 
 /**
@@ -7,7 +8,7 @@ import laba6.server.modules.ResponseOutputer;
  */
 public class ExitCommand extends AbstractCommand {
 
-    public ExitCommand() {
+    public ExitCommand(CollectionManager collectionManager) {
         super("exit", "", "terminate the client");
     }
 

@@ -1,6 +1,7 @@
 package laba6.server.commands;
 
 import laba6.common.exeptions.WrongAmountOfElementsException;
+import laba6.server.modules.CollectionManager;
 import laba6.server.modules.ResponseOutputer;
 
 /**
@@ -8,7 +9,7 @@ import laba6.server.modules.ResponseOutputer;
  */
 public class HelpCommand extends AbstractCommand {
 
-    public HelpCommand() {
+    public HelpCommand(CollectionManager collectionManager) {
         super("help", "", "display help on available commands");
     }
 

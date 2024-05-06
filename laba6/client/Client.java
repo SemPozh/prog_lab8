@@ -80,7 +80,6 @@ public class Client {
             System.out.println("The server address was entered incorrectly!");
             throw new NotInDeclaredLimitsException();
         } catch (IOException exception) {
-            System.out.println(exception);
             System.out.println("An error occurred while connecting to the server!");
             throw new ConnectionErrorException();
         }
@@ -101,7 +100,6 @@ public class Client {
                 serverResponse = (Response) serverReader.readObject();
                 System.out.println(serverResponse.getResponseBody());
             } catch (InvalidClassException | NotSerializableException exception) {
-                System.out.println(exception);
                 System.out.println("An error occurred while sending data to the server!");
             } catch (ClassNotFoundException exception) {
                 System.out.println("An error occurred while reading received data!");

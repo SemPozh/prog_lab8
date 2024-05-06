@@ -6,11 +6,14 @@ import laba6.common.exeptions.CommandUsageException;
 import laba6.common.exeptions.IncorrectInputInScriptException;
 import laba6.common.exeptions.InvalidObjectFieldException;
 import laba6.common.exeptions.ScriptRecursionException;
+import laba6.common.interaction.CommandType;
+import laba6.common.interaction.Commands;
 import laba6.common.interaction.Request;
 import laba6.common.interaction.ResponseCode;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Stack;
@@ -20,9 +23,12 @@ public class UserHandler {
     private InputHandler inputHandler;
     private Stack<File> scriptStack = new Stack<>();
     private Stack<InputHandler> scannerStack = new Stack<>();
+    private static HashMap<String, CommandType> commands;
 
     public UserHandler (InputHandler inputHandler){
         this.inputHandler = inputHandler;
+        Commands commandsList = new Commands();
+        commands = commandsList.getCommands();
     }
 
     /**
@@ -115,47 +121,27 @@ public class UserHandler {
     }
 
     private ProcessingCode processCommand(String command, String commandArgument) {
-        try {
-            switch (command) {
-                case "":
-                    return ProcessingCode.ERROR;
-                case "help":
-                case "info":
-                case "show":
-                case "clear":
-                case "exit":
-                case "reorder":
-                case "average_of_annual_turnover":
-                case "min_by_employees_count":
-                case "print_field_descending_annual_turnover":
-                    if (!commandArgument.isEmpty()) throw new CommandUsageException();
-                    break;
-                case "add":
-                case "add_if_max":
-                    if (!commandArgument.isEmpty()) throw new CommandUsageException("{element}");
-                    return ProcessingCode.OBJECT;
-                case "update":
-                    if (commandArgument.isEmpty()) throw new CommandUsageException("<ID> {element}");
-                    return ProcessingCode.OBJECT;
-                case "remove_by_id":
-                    if (commandArgument.isEmpty()) throw new CommandUsageException("<ID>");
-                    break;
-                case "execute_script":
-                    if (commandArgument.isEmpty()) throw new CommandUsageException("<file_name>");
-                    return ProcessingCode.SCRIPT;
-                case "insert_at":
-                    if (commandArgument.isEmpty()) throw new CommandUsageException("<index>");
-                    return ProcessingCode.OBJECT;
-                default:
-                    System.out.println("Command '" + command + "' not found. Type 'help' for help.");
-                    return ProcessingCode.ERROR;
+        try{
+            CommandType commandType = commands.get(command);
+
+            if (commandType == null){
+                throw new CommandUsageException();
             }
+
+            int argCount = 0;
+            if (!commandArgument.isEmpty()){
+                argCount=1;
+            }
+            if (commandType.getArgumentsCount() != argCount){
+                throw new CommandUsageException(commandType.getCommandView());
+            }
+            return commandType.getProcessingCode();
         } catch (CommandUsageException exception) {
-            if (exception.getMessage() != null) command += " " + exception.getMessage();
-            System.out.println("Usage: '" + command + "'");
+            if (exception.getMessage() != null){
+                System.out.println("Usage: '" + exception.getMessage() + "'");
+            }
             return ProcessingCode.ERROR;
         }
-        return ProcessingCode.OK;
     }
 
     /**
