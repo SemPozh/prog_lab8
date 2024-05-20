@@ -2,10 +2,7 @@ package laba6.client.modules;
 
 import laba6.client.App;
 import laba6.client.validators.*;
-import laba6.common.data.Address;
-import laba6.common.data.Coordinates;
-import laba6.common.data.Organization;
-import laba6.common.data.OrganizationType;
+import laba6.common.data.*;
 import laba6.common.exeptions.IncorrectInputInScriptException;
 import laba6.common.exeptions.InvalidObjectFieldException;
 import java.util.NoSuchElementException;
@@ -243,7 +240,7 @@ public class OrganizationAsker {
      * @return Organization's zip code.
      * @throws IncorrectInputInScriptException If script is running and something goes wrong.
      */
-    public Address askZipCode() throws IncorrectInputInScriptException {
+    public Address askAddress() throws IncorrectInputInScriptException {
         String zipCode;
         Address address;
         while (true) {
@@ -271,15 +268,22 @@ public class OrganizationAsker {
      * @return Organization object.
      * @throws IncorrectInputInScriptException When something went wrong in script.
      */
-    public Organization generateOrganizationObject() throws IncorrectInputInScriptException, InvalidObjectFieldException {
+    public Organization generateOrganizationObject(User user) throws IncorrectInputInScriptException, InvalidObjectFieldException {
         if (fileMode) setFileMode();
+        Organization organization = new Organization(askName(),
+                askCoordinates(),
+                askEmployeesCount(),
+                askOrganizationType(),
+                user);
+        organization.setAnnualTurnover(askAnnualTurnover());
+        organization.setOfficialAddress(askAddress());
         return new Organization(
                 askName(),
                 askCoordinates(),
-                askAnnualTurnover(),
                 askEmployeesCount(),
                 askOrganizationType(),
-                askZipCode()
+                user
         );
+
     }
 }

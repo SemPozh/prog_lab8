@@ -2,12 +2,11 @@ package laba6.client.modules;
 
 import laba6.client.App;
 import laba6.common.data.Organization;
+import laba6.common.data.User;
 import laba6.common.exeptions.CommandUsageException;
 import laba6.common.exeptions.IncorrectInputInScriptException;
 import laba6.common.exeptions.InvalidObjectFieldException;
 import laba6.common.exeptions.ScriptRecursionException;
-import laba6.common.interaction.CommandType;
-import laba6.common.interaction.Commands;
 import laba6.common.interaction.Request;
 import laba6.common.interaction.ResponseCode;
 
@@ -22,12 +21,18 @@ public class UserHandler {
     private InputHandler inputHandler;
     private final Stack<File> scriptStack = new Stack<>();
     private final Stack<InputHandler> scannerStack = new Stack<>();
-    private static HashMap<String, CommandType> commands;
+    private static HashMap<String, ClientCommandType> commands;
+    private User user;
+
 
     public UserHandler (InputHandler inputHandler){
         this.inputHandler = inputHandler;
-        Commands commandsList = new Commands();
+        ClientCommands commandsList = new ClientCommands();
         commands = commandsList.getCommands();
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     /**
@@ -43,6 +48,29 @@ public class UserHandler {
         int rewriteAttempts = 0;
         try {
             do {
+                while (user==null){
+                    System.out.println("You are not authorized!");
+                    System.out.print("Do you have an account? (y/n): ");
+                    userInput = inputHandler.readLine();
+                    if (userInput.equals("y")){
+                        System.out.print("Input your username: ");
+                        String username = inputHandler.readLine();
+                        System.out.print("Input your password: ");
+                        String password = inputHandler.readLine();
+                        return new Request("authorization", username+":"+password, null);
+                    } else if (userInput.equals("n")){
+                        System.out.println("Let's create an account!");
+                        System.out.print("Input your new username: ");
+                        String username = inputHandler.readLine();
+                        System.out.print("Input your new password: ");
+                        String password = inputHandler.readLine();
+                        return new Request("registration", username+":"+password, null);
+
+                    } else {
+                        System.out.println("Incorrect input! Type 'y' on 'n'");
+                    }
+                }
+
                 try {
                     if (fileMode() && (serverResponseCode == ResponseCode.ERROR ||
                             serverResponseCode == ResponseCode.SERVER_EXIT))
@@ -52,15 +80,36 @@ public class UserHandler {
                         inputHandler = scannerStack.pop();
                         System.out.println("Back to script '" + scriptStack.pop().getName() + "'...");
                     }
+                    String username = "";
+                    String password = "";
                     if (fileMode()) {
                         userInput = inputHandler.readLine();
                         if (!userInput.isEmpty()) {
                             System.out.print(App.SYMBOL1);
                             System.out.println(userInput);
                         }
+                        userInput = inputHandler.readLine();
+                        if (!userInput.isEmpty()) {
+                            System.out.print("Login: ");
+                            System.out.println(userInput);
+                            username = userInput;
+                        }
+                        userInput = inputHandler.readLine();
+                        if (!userInput.isEmpty()) {
+                            System.out.print("Password: ");
+                            System.out.println(userInput);
+                            password = userInput;
+                        }
                     } else {
                         System.out.print(App.SYMBOL1);
                         userInput = inputHandler.readLine();
+                        System.out.print("Login: ");
+                        username = inputHandler.readLine();
+                        System.out.print("Password: ");
+                        password = inputHandler.readLine();
+                    }
+                    if (!user.checkUser(username, password)){
+                        return new Request("","", null);
                     }
                     userCommand = (userInput.trim() + " ").split(" ", 2);
                     userCommand[1] = userCommand[1].trim();
@@ -75,6 +124,7 @@ public class UserHandler {
                         System.exit(0);
                     }
                 }
+
                 processingCode = processCommand(userCommand[0], userCommand[1]);
             } while (processingCode == ProcessingCode.ERROR && !fileMode() || userCommand[0].isEmpty());
             try {
@@ -83,7 +133,7 @@ public class UserHandler {
                 switch (processingCode) {
                     case OBJECT:
                         OrganizationAsker organizationAsker = new OrganizationAsker(inputHandler);
-                        Organization organizationObject = organizationAsker.generateOrganizationObject();
+                        Organization organizationObject = organizationAsker.generateOrganizationObject(user);
                         return new Request(userCommand[0], userCommand[1], organizationObject);
                     case SCRIPT:
                         File scriptFile = new File(userCommand[1]);
@@ -123,7 +173,7 @@ public class UserHandler {
 
     private ProcessingCode processCommand(String command, String commandArgument) {
         try{
-            CommandType commandType = commands.get(command);
+            ClientCommandType commandType = commands.get(command);
 
             if (commandType == null){
                 System.out.println("No such command. Use help to show all commands");
@@ -145,7 +195,4 @@ public class UserHandler {
             return ProcessingCode.ERROR;
         }
     }
-
-
-
 }

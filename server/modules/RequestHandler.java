@@ -1,5 +1,7 @@
 package laba6.server.modules;
 
+import laba6.client.modules.ClientCommandType;
+import laba6.common.data.User;
 import laba6.common.interaction.*;
 import laba6.server.commands.Command;
 
@@ -7,9 +9,17 @@ import java.util.HashMap;
 
 public class RequestHandler {
     private final CollectionManager collectionManager;
+    private final CommandManager commandManager;
 
-    public RequestHandler(CollectionManager collectionManager){
+    private static User user;
+
+    public RequestHandler(CollectionManager collectionManager, CommandManager commandManager){
         this.collectionManager = collectionManager;
+        this.commandManager = commandManager;
+    }
+
+    public static void setUser(User user) {
+        RequestHandler.user = user;
     }
 
     public CollectionManager getCollectionManager() {
@@ -25,7 +35,7 @@ public class RequestHandler {
     public Response handle(Request request) {
         ResponseCode responseCode = executeCommand(request.getCommandName(), request.getCommandStringArgument(),
                 request.getCommandObjectArgument());
-        return new Response(responseCode, ResponseOutputer.getAndClear());
+        return new Response(responseCode, ResponseOutputer.getAndClear(), user);
     }
 
     /**
@@ -38,8 +48,8 @@ public class RequestHandler {
      */
     private ResponseCode executeCommand(String commandName, String commandStringArgument,
                                         Object commandObjectArgument) {
-        Commands commandsList = new Commands();
-        HashMap<String, CommandType> commands = commandsList.getCommands();
+
+        HashMap<String, ServerCommandType> commands = commandManager.getCommands();
 
         Command command = commands.get(commandName).getCommand();
         if (command==null){

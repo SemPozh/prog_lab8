@@ -3,6 +3,10 @@ package laba6.server.modules;
 import laba6.common.data.Organization;
 import laba6.common.exeptions.CollectionIsEmptyException;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Stack;
@@ -10,11 +14,12 @@ import java.util.Stack;
 public class CollectionManager {
     private Stack<Organization> organizationCollection;
     private LocalDateTime lastSaveTime;
-    private final CollectionFileManager collectionFileManager;
+//    private final CollectionFileManager collectionFileManager;
 
-    public CollectionManager(CollectionFileManager collectionFileManager) {
+    private final DatabaseManager databaseManager;
+    public CollectionManager(DatabaseManager databaseManager) {
         this.lastSaveTime = null;
-        this.collectionFileManager = collectionFileManager;
+        this.databaseManager = databaseManager;
 
         loadCollection();
     }
@@ -24,6 +29,10 @@ public class CollectionManager {
      */
     public LocalDateTime getLastSaveTime() {
         return lastSaveTime;
+    }
+
+    public  DatabaseManager getDatabaseManager() {
+        return databaseManager;
     }
 
     /**
@@ -126,10 +135,10 @@ public class CollectionManager {
     /**
      * Saves the collection to file.
      */
-    public void saveCollection() {
-        collectionFileManager.writeCollection(organizationCollection);
-        lastSaveTime = LocalDateTime.now();
-    }
+//    public void saveCollection() {
+//        collectionFileManager.writeCollection(organizationCollection);
+//        lastSaveTime = LocalDateTime.now();
+//    }
 
     public double getAvgOfAnnualTurnover(){
         return organizationCollection.stream()
@@ -141,6 +150,17 @@ public class CollectionManager {
      * Loads the collection from file.
      */
     private void loadCollection() {
-        organizationCollection = collectionFileManager.readCollection();
+        organizationCollection = new Stack<>();
+        try {
+            Statement statement = databaseManager.getConnection().createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM Organization");
+            while (resultSet.next()){
+                Organization organization = databaseManager.getOrganizationObjectFromResultSetRow(resultSet);
+                organizationCollection.add(organization);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+//        organizationCollection = collectionFileManager.readCollection();
     }
 }

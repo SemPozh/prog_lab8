@@ -15,6 +15,7 @@ public class Organization implements Comparable, Serializable {
     private Integer employeesCount;
     private OrganizationType type;
     private Address officialAddress = null;
+    private User createdBy;
 
     public void setId() {
         this.id = generateID();
@@ -38,10 +39,6 @@ public class Organization implements Comparable, Serializable {
 
     public void setCreationDate() {
         this.creationDate = generateDateTime();
-    }
-
-    public void setCreationDate(ZonedDateTime creationDate){
-        this.creationDate = creationDate;
     }
 
     public void setAnnualTurnover(Integer annualTurnover) throws InvalidObjectFieldException {
@@ -71,88 +68,35 @@ public class Organization implements Comparable, Serializable {
         this.officialAddress = officialAddress;
     }
 
-    public Organization(String name, Coordinates coordinates, Integer annualTurnover, Integer employeesCount, OrganizationType organizationType, Address officialAddress) throws InvalidObjectFieldException {
-        setId();
-        setCreationDate();
-        setName(name);
-        setCoordinates(coordinates);
-        setAnnualTurnover(annualTurnover);
-        setEmployeesCount(employeesCount);
-        setType(organizationType);
-        setOfficialAddress(officialAddress);
-    }
-
-    public Organization(String name, Coordinates coordinates, Integer employeesCount, OrganizationType organizationType, Address officialAddress) throws InvalidObjectFieldException {
-        setId();
-        setCreationDate();
-        setName(name);
-        setCoordinates(coordinates);
-        setEmployeesCount(employeesCount);
-        setType(organizationType);
-        setOfficialAddress(officialAddress);
-    }
-
-    public Organization(String name, Coordinates coordinates, Integer annualTurnover, Integer employeesCount, OrganizationType organizationType) throws InvalidObjectFieldException {
-        setId();
-        setCreationDate();
-        setName(name);
-        setCoordinates(coordinates);
-        setAnnualTurnover(annualTurnover);
-        setEmployeesCount(employeesCount);
-        setType(organizationType);
-    }
-
-    public Organization(String name, Coordinates coordinates, Integer employeesCount, OrganizationType organizationType) throws InvalidObjectFieldException {
-        setId();
-        setCreationDate();
-        setName(name);
-        setCoordinates(coordinates);
-        setEmployeesCount(employeesCount);
-        setType(organizationType);
-    }
-
-    public Organization(Integer id, String name, Coordinates coordinates, ZonedDateTime creationDate, Integer annualTurnover, Integer employeesCount, OrganizationType organizationType, Address officialAddress) throws InvalidObjectFieldException {
+    public Organization(Integer id, String name, Coordinates coordinates, ZonedDateTime creationDate, Integer employeesCount, OrganizationType organizationType, User createdBy) throws InvalidObjectFieldException {
         setId(id);
-        setCreationDate(creationDate);
         setName(name);
         setCoordinates(coordinates);
-        setAnnualTurnover(annualTurnover);
+        setCreationDate(creationDate);
         setEmployeesCount(employeesCount);
         setType(organizationType);
-        setOfficialAddress(officialAddress);
+        setCreatedBy(createdBy);
     }
 
-    public Organization(Integer id, String name, Coordinates coordinates, ZonedDateTime creationDate, Integer employeesCount, OrganizationType organizationType, Address officialAddress) throws InvalidObjectFieldException {
-        setId(id);
-        setCreationDate(creationDate);
+    public Organization(String name, Coordinates coordinates, Integer employeesCount, OrganizationType organizationType, User createdBy) throws InvalidObjectFieldException {
+        setId();
         setName(name);
         setCoordinates(coordinates);
-        setEmployeesCount(employeesCount);
-        setType(organizationType);
-        setOfficialAddress(officialAddress);
-    }
-
-    public Organization(Integer id, String name, Coordinates coordinates, ZonedDateTime creationDate, Integer annualTurnover, Integer employeesCount, OrganizationType organizationType) throws InvalidObjectFieldException {
-        setId(id);
         setCreationDate(creationDate);
-        setName(name);
-        setCoordinates(coordinates);
-        setAnnualTurnover(annualTurnover);
         setEmployeesCount(employeesCount);
         setType(organizationType);
-    }
-
-    public Organization(Integer id, String name, Coordinates coordinates, ZonedDateTime creationDate, Integer employeesCount, OrganizationType organizationType) throws InvalidObjectFieldException {
-        setId(id);
-        setCreationDate(creationDate);
-        setName(name);
-        setCoordinates(coordinates);
-        setEmployeesCount(employeesCount);
-        setType(organizationType);
+        setCreatedBy(createdBy);
     }
 
 
 
+
+    public void setCreatedBy(User user){
+        this.createdBy = user;
+    }
+    public void setCreationDate(ZonedDateTime creationDate){
+        this.creationDate = creationDate;
+    }
     private Integer generateID(){
         return Math.abs(generateDateTime().hashCode() * 150 - 500);
     }

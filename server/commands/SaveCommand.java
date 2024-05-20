@@ -22,7 +22,7 @@ public class SaveCommand extends AbstractCommand {
     public boolean execute(String stringArgument, Object objectArgument, CollectionManager collectionManager) {
         try {
             if (!stringArgument.isEmpty() || objectArgument != null) throw new WrongAmountOfElementsException();
-            collectionManager.saveCollection();
+//            collectionManager.saveCollection();
             return true;
         } catch (WrongAmountOfElementsException exception) {
             ResponseOutputer.appendln("Usage: '" + getName() + " " + getUsage() + "'");

@@ -98,6 +98,7 @@ public class Client {
                 if (requestToServer.isEmpty()) continue;
                 serverWriter.writeObject(requestToServer);
                 serverResponse = (Response) serverReader.readObject();
+                userHandler.setUser(serverResponse.getUser());
                 System.out.println(serverResponse.getResponseBody());
             } catch (InvalidClassException | NotSerializableException exception) {
                 System.out.println("An error occurred while sending data to the server!");

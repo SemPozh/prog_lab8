@@ -1,10 +1,13 @@
 package laba6.server;
 
-import laba6.server.modules.CollectionFileManager;
+import laba6.common.exeptions.IncorrectAuthFileException;
 import laba6.server.modules.CollectionManager;
+import laba6.server.modules.CommandManager;
+import laba6.server.modules.DatabaseManager;
 import laba6.server.modules.RequestHandler;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -33,14 +36,33 @@ public class App {
         }
 
         if (args.length==1) {
-            fileName = args[0];
-            CollectionFileManager collectionFileManager = new CollectionFileManager(fileName);
-            CollectionManager collectionManager = new CollectionManager(collectionFileManager);
-            RequestHandler requestHandler = new RequestHandler(collectionManager);
+            String authFileName = args[0];
+            DatabaseManager databaseManager = new DatabaseManager("jdbc:postgresql://pg:5432/studs", authFileName);
+            try {
+                databaseManager.connectToDatabase();
+            } catch (IncorrectAuthFileException e) {
+                System.out.println(e.getMessage());
+                System.out.println("AuthFile: '<login>:<password>'");
+            } catch (SQLException e) {
+                System.out.println("Can't connect to database, program can't be executed");
+            }
+            CollectionManager collectionManager = new CollectionManager(databaseManager);
+            CommandManager commandManager = new CommandManager();
+            RequestHandler requestHandler = new RequestHandler(collectionManager, commandManager);
             Server server = new Server(PORT, CONNECTION_TIMEOUT, requestHandler);
+
+
+//            try {
+//                Class.forName("org.postgresql.Driver");
+//                Connection connection = DriverManager.getConnection("jdbc:postgresql://pg:5432/studs", "s409359", "lh0mZ70QjAUT3DOG");
+//            } catch (SQLException e) {
+//                System.out.println("An error while connecting to the database");
+//            } catch (ClassNotFoundException e) {
+//                System.out.println("DB Driver not found");
+//            }
             server.run();
         } else {
-            System.out.println("Give name of the file in command string args!");
+            System.out.println("Give name of the file in command string args!\nUsage: java -jar <jar_file.jar> <db_auth_file>");
         }
     }
 }
