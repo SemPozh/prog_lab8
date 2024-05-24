@@ -1,6 +1,6 @@
-package laba6.common.data;
+package laba7.common.data;
 
-import laba6.common.exeptions.InvalidObjectFieldException;
+import laba7.common.exeptions.InvalidObjectFieldException;
 
 import java.io.Serializable;
 

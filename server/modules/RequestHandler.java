@@ -1,9 +1,9 @@
-package laba6.server.modules;
+package laba7.server.modules;
 
-import laba6.client.modules.ClientCommandType;
-import laba6.common.data.User;
-import laba6.common.interaction.*;
-import laba6.server.commands.Command;
+import laba7.client.modules.ClientCommandType;
+import laba7.common.data.User;
+import laba7.common.interaction.*;
+import laba7.server.commands.Command;
 
 import java.util.HashMap;
 

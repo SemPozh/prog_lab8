@@ -1,7 +1,7 @@
-package laba6.client.validators;
+package laba7.client.validators;
 
 
-import laba6.common.exeptions.InvalidObjectFieldException;
+import laba7.common.exeptions.InvalidObjectFieldException;
 
 public class AnnualTurnoverValidator extends Validator<Integer>{
     @Override

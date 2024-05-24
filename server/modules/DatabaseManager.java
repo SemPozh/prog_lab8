@@ -1,9 +1,9 @@
-package laba6.server.modules;
+package laba7.server.modules;
 
-import laba6.common.data.*;
-import laba6.common.exeptions.IncorrectAuthFileException;
-import laba6.common.exeptions.InvalidObjectFieldException;
-import laba6.common.exeptions.UserAlreadyExistsException;
+import laba7.common.data.*;
+import laba7.common.exeptions.IncorrectAuthFileException;
+import laba7.common.exeptions.InvalidObjectFieldException;
+import laba7.common.exeptions.UserAlreadyExistsException;
 
 import java.io.File;
 import java.io.FileNotFoundException;

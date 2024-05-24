@@ -1,10 +1,10 @@
-package laba6.server.commands;
+package laba7.server.commands;
 
 
-import laba6.common.data.Organization;
-import laba6.common.exeptions.WrongAmountOfElementsException;
-import laba6.server.modules.CollectionManager;
-import laba6.server.modules.ResponseOutputer;
+import laba7.common.data.Organization;
+import laba7.common.exeptions.WrongAmountOfElementsException;
+import laba7.server.modules.CollectionManager;
+import laba7.server.modules.ResponseOutputer;
 
 /**
  * Command 'add'. Adds a new element to collection.

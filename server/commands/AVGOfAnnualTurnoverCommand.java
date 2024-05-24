@@ -1,9 +1,9 @@
-package laba6.server.commands;
+package laba7.server.commands;
 
-import laba6.common.exeptions.CollectionIsEmptyException;
-import laba6.common.exeptions.WrongAmountOfElementsException;
-import laba6.server.modules.CollectionManager;
-import laba6.server.modules.ResponseOutputer;
+import laba7.common.exeptions.CollectionIsEmptyException;
+import laba7.common.exeptions.WrongAmountOfElementsException;
+import laba7.server.modules.CollectionManager;
+import laba7.server.modules.ResponseOutputer;
 
 /**
  * Command 'sum_of_health'. Prints the sum of health of all marines.

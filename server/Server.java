@@ -1,12 +1,12 @@
-package laba6.server;
+package laba7.server;
 
-import laba6.common.exeptions.ClosingSocketException;
-import laba6.common.exeptions.ConnectionErrorException;
-import laba6.common.exeptions.OpeningServerSocketException;
-import laba6.common.interaction.Request;
-import laba6.common.interaction.Response;
-import laba6.common.interaction.ResponseCode;
-import laba6.server.modules.RequestHandler;
+import laba7.common.exeptions.ClosingSocketException;
+import laba7.common.exeptions.ConnectionErrorException;
+import laba7.common.exeptions.OpeningServerSocketException;
+import laba7.common.interaction.Request;
+import laba7.common.interaction.Response;
+import laba7.common.interaction.ResponseCode;
+import laba7.server.modules.RequestHandler;
 
 import java.io.*;
 import java.net.ServerSocket;

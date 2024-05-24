@@ -1,4 +1,4 @@
-package laba6.server.modules;
+package laba7.server.modules;
 
 /**
  * A class for generating responses to a client.

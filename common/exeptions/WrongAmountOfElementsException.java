@@ -1,4 +1,4 @@
-package laba6.common.exeptions;
+package laba7.common.exeptions;
 
 public class WrongAmountOfElementsException extends Exception{
 }

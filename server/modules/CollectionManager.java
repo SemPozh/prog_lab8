@@ -1,7 +1,7 @@
-package laba6.server.modules;
+package laba7.server.modules;
 
-import laba6.common.data.Organization;
-import laba6.common.exeptions.CollectionIsEmptyException;
+import laba7.common.data.Organization;
+import laba7.common.exeptions.CollectionIsEmptyException;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

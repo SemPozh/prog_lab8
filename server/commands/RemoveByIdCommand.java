@@ -1,13 +1,13 @@
-package laba6.server.commands;
+package laba7.server.commands;
 
-import laba6.client.validators.IDValidator;
-import laba6.common.data.Organization;
-import laba6.common.exeptions.CollectionIsEmptyException;
-import laba6.common.exeptions.InvalidObjectFieldException;
-import laba6.common.exeptions.OrganizationNotFoundException;
-import laba6.common.exeptions.WrongAmountOfElementsException;
-import laba6.server.modules.CollectionManager;
-import laba6.server.modules.ResponseOutputer;
+import laba7.client.validators.IDValidator;
+import laba7.common.data.Organization;
+import laba7.common.exeptions.CollectionIsEmptyException;
+import laba7.common.exeptions.InvalidObjectFieldException;
+import laba7.common.exeptions.OrganizationNotFoundException;
+import laba7.common.exeptions.WrongAmountOfElementsException;
+import laba7.server.modules.CollectionManager;
+import laba7.server.modules.ResponseOutputer;
 
 /**
  * Command 'remove_by_id'. Removes the element by its ID.

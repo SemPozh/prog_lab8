@@ -1,4 +1,4 @@
-package laba6.common.interaction;
+package laba7.common.interaction;
 
 public enum ResponseCode {
     OK,

@@ -1,7 +1,7 @@
-package laba6.server.modules;
+package laba7.server.modules;
 
-import laba6.client.modules.ProcessingCode;
-import laba6.server.commands.*;
+import laba7.client.modules.ProcessingCode;
+import laba7.server.commands.*;
 
 import java.util.HashMap;
 

@@ -1,10 +1,10 @@
-package laba6.client;
+package laba7.client;
 
-import laba6.client.modules.UserHandler;
-import laba6.common.exeptions.ConnectionErrorException;
-import laba6.common.exeptions.NotInDeclaredLimitsException;
-import laba6.common.interaction.Request;
-import laba6.common.interaction.Response;
+import laba7.client.modules.UserHandler;
+import laba7.common.exeptions.ConnectionErrorException;
+import laba7.common.exeptions.NotInDeclaredLimitsException;
+import laba7.common.interaction.Request;
+import laba7.common.interaction.Response;
 
 import java.io.*;
 import java.net.InetSocketAddress;

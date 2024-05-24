@@ -1,4 +1,4 @@
-package laba6.common.interaction;
+package laba7.common.interaction;
 
 import java.io.Serializable;
 

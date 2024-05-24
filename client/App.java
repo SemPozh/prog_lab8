@@ -1,9 +1,9 @@
-package laba6.client;
+package laba7.client;
 
-import laba6.client.modules.InputHandler;
-import laba6.client.modules.UserHandler;
-import laba6.common.exeptions.NotInDeclaredLimitsException;
-import laba6.common.exeptions.WrongAmountOfElementsException;
+import laba7.client.modules.InputHandler;
+import laba7.client.modules.UserHandler;
+import laba7.common.exeptions.NotInDeclaredLimitsException;
+import laba7.common.exeptions.WrongAmountOfElementsException;
 
 import java.util.Scanner;
 

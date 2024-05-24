@@ -1,14 +1,14 @@
-package laba6.client.modules;
+package laba7.client.modules;
 
-import laba6.client.App;
-import laba6.common.data.Organization;
-import laba6.common.data.User;
-import laba6.common.exeptions.CommandUsageException;
-import laba6.common.exeptions.IncorrectInputInScriptException;
-import laba6.common.exeptions.InvalidObjectFieldException;
-import laba6.common.exeptions.ScriptRecursionException;
-import laba6.common.interaction.Request;
-import laba6.common.interaction.ResponseCode;
+import laba7.client.App;
+import laba7.common.data.Organization;
+import laba7.common.data.User;
+import laba7.common.exeptions.CommandUsageException;
+import laba7.common.exeptions.IncorrectInputInScriptException;
+import laba7.common.exeptions.InvalidObjectFieldException;
+import laba7.common.exeptions.ScriptRecursionException;
+import laba7.common.interaction.Request;
+import laba7.common.interaction.ResponseCode;
 
 import java.io.File;
 import java.io.FileNotFoundException;

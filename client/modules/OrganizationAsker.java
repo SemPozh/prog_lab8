@@ -1,10 +1,10 @@
-package laba6.client.modules;
+package laba7.client.modules;
 
-import laba6.client.App;
-import laba6.client.validators.*;
-import laba6.common.data.*;
-import laba6.common.exeptions.IncorrectInputInScriptException;
-import laba6.common.exeptions.InvalidObjectFieldException;
+import laba7.client.App;
+import laba7.client.validators.*;
+import laba7.common.data.*;
+import laba7.common.exeptions.IncorrectInputInScriptException;
+import laba7.common.exeptions.InvalidObjectFieldException;
 import java.util.NoSuchElementException;
 
 public class OrganizationAsker {

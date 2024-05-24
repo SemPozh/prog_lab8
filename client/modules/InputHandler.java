@@ -1,4 +1,4 @@
-package laba6.client.modules;
+package laba7.client.modules;
 
 import java.util.Scanner;
 

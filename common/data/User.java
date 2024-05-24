@@ -1,4 +1,4 @@
-package laba6.common.data;
+package laba7.common.data;
 
 public class User {
     private Integer id;

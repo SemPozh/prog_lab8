@@ -1,10 +1,10 @@
-package laba6.server;
+package laba7.server;
 
-import laba6.common.exeptions.IncorrectAuthFileException;
-import laba6.server.modules.CollectionManager;
-import laba6.server.modules.CommandManager;
-import laba6.server.modules.DatabaseManager;
-import laba6.server.modules.RequestHandler;
+import laba7.common.exeptions.IncorrectAuthFileException;
+import laba7.server.modules.CollectionManager;
+import laba7.server.modules.CommandManager;
+import laba7.server.modules.DatabaseManager;
+import laba7.server.modules.RequestHandler;
 
 import java.io.IOException;
 import java.sql.SQLException;

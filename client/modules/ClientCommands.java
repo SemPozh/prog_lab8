@@ -1,6 +1,6 @@
-package laba6.client.modules;
+package laba7.client.modules;
 
-import laba6.server.commands.*;
+import laba7.server.commands.*;
 
 import java.util.HashMap;
 

@@ -1,4 +1,4 @@
-package laba6.common.exeptions;
+package laba7.common.exeptions;
 
 /**
  * Is throwed when script is infinitely recursive.
