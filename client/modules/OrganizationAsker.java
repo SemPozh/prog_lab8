@@ -270,20 +270,14 @@ public class OrganizationAsker {
      */
     public Organization generateOrganizationObject(User user) throws IncorrectInputInScriptException, InvalidObjectFieldException {
         if (fileMode) setFileMode();
-        Organization organization = new Organization(askName(),
+        Organization organization = new Organization(
+                askName(),
                 askCoordinates(),
                 askEmployeesCount(),
                 askOrganizationType(),
                 user);
         organization.setAnnualTurnover(askAnnualTurnover());
         organization.setOfficialAddress(askAddress());
-        return new Organization(
-                askName(),
-                askCoordinates(),
-                askEmployeesCount(),
-                askOrganizationType(),
-                user
-        );
-
+        return organization;
     }
 }

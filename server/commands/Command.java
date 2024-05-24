@@ -1,5 +1,6 @@
 package laba6.server.commands;
 
+import laba6.common.data.User;
 import laba6.server.modules.CollectionManager;
 
 /**
@@ -12,5 +13,5 @@ public interface Command {
 
     String getDescription();
 
-    boolean execute(String commandStringArgument, Object commandObjectArgument, CollectionManager collectionManager);
+    boolean execute(String commandStringArgument, Object commandObjectArgument, CollectionManager collectionManager, User user);
 }

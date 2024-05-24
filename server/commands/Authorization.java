@@ -20,19 +20,19 @@ public class Authorization extends AbstractCommand {
      * @return Command exit status.
      */
     @Override
-    public boolean execute(String stringArgument, Object objectArgument, CollectionManager collectionManager) {
+    public boolean execute(String stringArgument, Object objectArgument, CollectionManager collectionManager, User user) {
         try {
             if (stringArgument.isEmpty() || objectArgument != null) throw new WrongAmountOfElementsException();
             try {
                 String username = stringArgument.split(":")[0];
                 String password = stringArgument.split(":")[1];
-                User user = collectionManager.getDatabaseManager().authorizeUser(username, password);
+                User newUser = collectionManager.getDatabaseManager().authorizeUser(username, password);
                 if (user == null){
                     ResponseOutputer.appendln("Login/password is incorrect");
                 } else {
                     ResponseOutputer.appendln("You was successfully authorized");
                 }
-                RequestHandler.setUser(user);
+                RequestHandler.setUser(newUser);
             } catch (ArrayIndexOutOfBoundsException e){
                 throw new WrongAmountOfElementsException();
             }

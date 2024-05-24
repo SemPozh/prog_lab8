@@ -2,10 +2,8 @@ package laba6.server.commands;
 
 import laba6.client.validators.IDValidator;
 import laba6.common.data.Organization;
-import laba6.common.exeptions.CollectionIsEmptyException;
-import laba6.common.exeptions.InvalidObjectFieldException;
-import laba6.common.exeptions.OrganizationNotFoundException;
-import laba6.common.exeptions.WrongAmountOfElementsException;
+import laba6.common.data.User;
+import laba6.common.exeptions.*;
 import laba6.server.modules.CollectionManager;
 import laba6.server.modules.ResponseOutputer;
 
@@ -24,7 +22,7 @@ public class UpdateCommand extends AbstractCommand {
      * @return Command exit status.
      */
     @Override
-    public boolean execute(String stringArgument, Object objectArgument, CollectionManager collectionManager) {
+    public boolean execute(String stringArgument, Object objectArgument, CollectionManager collectionManager, User user) {
         try {
             if (stringArgument.isEmpty() || objectArgument == null) throw new WrongAmountOfElementsException();
             if (collectionManager.collectionSize() == 0) throw new CollectionIsEmptyException();
@@ -34,8 +32,11 @@ public class UpdateCommand extends AbstractCommand {
             if (id <= 0) throw new NumberFormatException();
             Organization oldOrganization = collectionManager.getById(id);
             if (oldOrganization == null) throw new OrganizationNotFoundException();
-
+            if (oldOrganization.getCreatedBy() != user){
+                throw new CollectionAccessException("You are not owner of this organization and not allowed to update it!");
+            }
             Organization organization = (Organization) objectArgument;
+            collectionManager.getDatabaseManager().updateOrganization(oldOrganization, organization);
             oldOrganization.setName(organization.getName());
             oldOrganization.setCoordinates(organization.getCoordinates());
             oldOrganization.setAnnualTurnover(organization.getAnnualTurnover());
@@ -55,6 +56,8 @@ public class UpdateCommand extends AbstractCommand {
             ResponseOutputer.appenderror("There is no soldier with this ID in the collection!");
         } catch (ClassCastException exception) {
             ResponseOutputer.appenderror("The object passed by the client is invalid!");
+        } catch (CollectionAccessException e) {
+            ResponseOutputer.appendln(e.getMessage());
         }
         return false;
     }

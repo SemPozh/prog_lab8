@@ -57,14 +57,14 @@ public class UserHandler {
                         String username = inputHandler.readLine();
                         System.out.print("Input your password: ");
                         String password = inputHandler.readLine();
-                        return new Request("authorization", username+":"+password, null);
+                        return new Request("authorization", username+":"+password, null, null);
                     } else if (userInput.equals("n")){
                         System.out.println("Let's create an account!");
                         System.out.print("Input your new username: ");
                         String username = inputHandler.readLine();
                         System.out.print("Input your new password: ");
                         String password = inputHandler.readLine();
-                        return new Request("registration", username+":"+password, null);
+                        return new Request("registration", username+":"+password, null, null);
 
                     } else {
                         System.out.println("Incorrect input! Type 'y' on 'n'");
@@ -109,7 +109,8 @@ public class UserHandler {
                         password = inputHandler.readLine();
                     }
                     if (!user.checkUser(username, password)){
-                        return new Request("","", null);
+                        System.out.println("Incorrect Login/password. Access denied!");
+                        return new Request();
                     }
                     userCommand = (userInput.trim() + " ").split(" ", 2);
                     userCommand[1] = userCommand[1].trim();
@@ -134,7 +135,7 @@ public class UserHandler {
                     case OBJECT:
                         OrganizationAsker organizationAsker = new OrganizationAsker(inputHandler);
                         Organization organizationObject = organizationAsker.generateOrganizationObject(user);
-                        return new Request(userCommand[0], userCommand[1], organizationObject);
+                        return new Request(userCommand[0], userCommand[1], organizationObject, user);
                     case SCRIPT:
                         File scriptFile = new File(userCommand[1]);
                         if (!scriptFile.exists()) throw new FileNotFoundException();
@@ -163,7 +164,7 @@ public class UserHandler {
             scriptStack.clear();
             return new Request();
         }
-        return new Request(userCommand[0], userCommand[1]);
+        return new Request(userCommand[0], userCommand[1], null, user);
     }
 
 

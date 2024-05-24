@@ -2,6 +2,7 @@ package laba6.server.commands;
 
 
 import laba6.common.data.Organization;
+import laba6.common.data.User;
 import laba6.common.exeptions.WrongAmountOfElementsException;
 import laba6.server.modules.CollectionManager;
 import laba6.server.modules.ResponseOutputer;
@@ -21,7 +22,7 @@ public class InsertAtCommand extends AbstractCommand {
      * @return Command exit status.
      */
     @Override
-    public boolean execute(String stringArgument, Object objectArgument, CollectionManager collectionManager) {
+    public boolean execute(String stringArgument, Object objectArgument, CollectionManager collectionManager, User user) {
         try {
             int index = Integer.parseInt(stringArgument);
             if (stringArgument.isEmpty() || objectArgument == null) throw new WrongAmountOfElementsException();

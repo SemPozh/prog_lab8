@@ -15,15 +15,15 @@ public class Registration extends AbstractCommand {
 
 
     @Override
-    public boolean execute(String stringArgument, Object objectArgument, CollectionManager collectionManager) {
+    public boolean execute(String stringArgument, Object objectArgument, CollectionManager collectionManager, User user) {
         try {
             if (stringArgument.isEmpty() || objectArgument != null) throw new WrongAmountOfElementsException();
             try {
                 String username = stringArgument.split(":")[0];
                 String password = stringArgument.split(":")[1];
-                User user = collectionManager.getDatabaseManager().createUser(username, password);
+                User newUser = collectionManager.getDatabaseManager().createUser(username, password);
                 ResponseOutputer.appendln("You was successfully authorized");
-                RequestHandler.setUser(user);
+                RequestHandler.setUser(newUser);
             } catch (ArrayIndexOutOfBoundsException e){
                 throw new WrongAmountOfElementsException();
             } catch (UserAlreadyExistsException e) {

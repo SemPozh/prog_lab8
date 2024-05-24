@@ -17,6 +17,11 @@ public class Organization implements Comparable, Serializable {
     private Address officialAddress = null;
     private User createdBy;
 
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
     public void setId() {
         this.id = generateID();
     }
@@ -82,7 +87,7 @@ public class Organization implements Comparable, Serializable {
         setId();
         setName(name);
         setCoordinates(coordinates);
-        setCreationDate(creationDate);
+        setCreationDate();
         setEmployeesCount(employeesCount);
         setType(organizationType);
         setCreatedBy(createdBy);

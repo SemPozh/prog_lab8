@@ -6,14 +6,17 @@ import laba6.common.interaction.*;
 import laba6.server.commands.Command;
 
 import java.util.HashMap;
+import java.util.concurrent.RecursiveTask;
 
-public class RequestHandler {
+public class RequestHandler extends RecursiveTask<Response> {
     private final CollectionManager collectionManager;
     private final CommandManager commandManager;
+    private Request request;
 
     private static User user;
 
-    public RequestHandler(CollectionManager collectionManager, CommandManager commandManager){
+    public RequestHandler(Request request, CollectionManager collectionManager, CommandManager commandManager){
+        this.request = request;
         this.collectionManager = collectionManager;
         this.commandManager = commandManager;
     }
@@ -26,18 +29,13 @@ public class RequestHandler {
         return collectionManager;
     }
 
-    /**
-     * Handles requests.
-     *
-     * @param request Request to be processed.
-     * @return Response to request.
-     */
-    public Response handle(Request request) {
+    @Override
+    public Response compute() {
+        User hashedUser = request.getUser();
         ResponseCode responseCode = executeCommand(request.getCommandName(), request.getCommandStringArgument(),
-                request.getCommandObjectArgument());
+                request.getCommandObjectArgument(), hashedUser);
         return new Response(responseCode, ResponseOutputer.getAndClear(), user);
     }
-
     /**
      * Executes a command from a request.
      *
@@ -47,7 +45,7 @@ public class RequestHandler {
      * @return Command execute status.
      */
     private ResponseCode executeCommand(String commandName, String commandStringArgument,
-                                        Object commandObjectArgument) {
+                                        Object commandObjectArgument, User user) {
 
         HashMap<String, ServerCommandType> commands = commandManager.getCommands();
 
@@ -56,7 +54,7 @@ public class RequestHandler {
             ResponseOutputer.appendln("Command '" + commandName + "' not found. Type 'help' for help.");
             return ResponseCode.ERROR;
         }
-        if (command.execute(commandStringArgument, commandObjectArgument, collectionManager)){
+        if (command.execute(commandStringArgument, commandObjectArgument, collectionManager, user)){
             return ResponseCode.OK;
         } else {
             return ResponseCode.ERROR;

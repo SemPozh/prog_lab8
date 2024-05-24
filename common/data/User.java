@@ -1,6 +1,8 @@
 package laba6.common.data;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     private Integer id;
     private String username;
     private String password;
@@ -21,5 +23,9 @@ public class User {
 
     public boolean checkUser(String username, String password){
         return this.password.equals(password) & this.username.equals(username);
+    }
+
+    public Integer getId() {
+        return id;
     }
 }

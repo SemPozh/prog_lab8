@@ -18,6 +18,7 @@ import java.util.logging.SimpleFormatter;
  */
 public class App {
     public static final int PORT = 1488;
+    private static final int MAX_CLIENTS = 1000;
     public static final int CONNECTION_TIMEOUT = 80 * 100000;
     public static Logger logger = Logger.getLogger("ServerLogger");
     public static String fileName;
@@ -48,18 +49,7 @@ public class App {
             }
             CollectionManager collectionManager = new CollectionManager(databaseManager);
             CommandManager commandManager = new CommandManager();
-            RequestHandler requestHandler = new RequestHandler(collectionManager, commandManager);
-            Server server = new Server(PORT, CONNECTION_TIMEOUT, requestHandler);
-
-
-//            try {
-//                Class.forName("org.postgresql.Driver");
-//                Connection connection = DriverManager.getConnection("jdbc:postgresql://pg:5432/studs", "s409359", "lh0mZ70QjAUT3DOG");
-//            } catch (SQLException e) {
-//                System.out.println("An error while connecting to the database");
-//            } catch (ClassNotFoundException e) {
-//                System.out.println("DB Driver not found");
-//            }
+            Server server = new Server(PORT, MAX_CLIENTS, commandManager, collectionManager);
             server.run();
         } else {
             System.out.println("Give name of the file in command string args!\nUsage: java -jar <jar_file.jar> <db_auth_file>");

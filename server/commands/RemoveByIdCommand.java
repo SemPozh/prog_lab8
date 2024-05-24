@@ -2,10 +2,8 @@ package laba6.server.commands;
 
 import laba6.client.validators.IDValidator;
 import laba6.common.data.Organization;
-import laba6.common.exeptions.CollectionIsEmptyException;
-import laba6.common.exeptions.InvalidObjectFieldException;
-import laba6.common.exeptions.OrganizationNotFoundException;
-import laba6.common.exeptions.WrongAmountOfElementsException;
+import laba6.common.data.User;
+import laba6.common.exeptions.*;
 import laba6.server.modules.CollectionManager;
 import laba6.server.modules.ResponseOutputer;
 
@@ -24,7 +22,7 @@ public class RemoveByIdCommand extends AbstractCommand {
      * @return Command exit status.
      */
     @Override
-    public boolean execute(String stringArgument, Object objectArgument, CollectionManager collectionManager) {
+    public boolean execute(String stringArgument, Object objectArgument, CollectionManager collectionManager, User user) {
         try {
             if (stringArgument.isEmpty() || objectArgument != null) throw new WrongAmountOfElementsException();
             if (collectionManager.collectionSize() == 0) throw new CollectionIsEmptyException();
@@ -32,6 +30,9 @@ public class RemoveByIdCommand extends AbstractCommand {
             Integer id = idValidator.validate(stringArgument);
             Organization organization = collectionManager.getById(id);
             if (organization == null) throw new OrganizationNotFoundException();
+            if (organization.getCreatedBy() != user){
+                throw new CollectionAccessException("You are not owner of this Organization and can't remove it!");
+            }
             collectionManager.removeFromCollection(organization);
             ResponseOutputer.appendln("Organization deleted successfully");
             return true;
@@ -43,6 +44,8 @@ public class RemoveByIdCommand extends AbstractCommand {
             ResponseOutputer.appenderror("ID must be represented by a number!");
         } catch (OrganizationNotFoundException exception) {
             ResponseOutputer.appenderror("There is no organization with this ID in the collection!");
+        } catch (CollectionAccessException e) {
+            ResponseOutputer.appendln(e.getMessage());
         }
         return false;
     }

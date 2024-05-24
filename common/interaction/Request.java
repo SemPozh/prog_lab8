@@ -1,5 +1,7 @@
 package laba6.common.interaction;
 
+import laba6.common.data.User;
+
 import java.io.Serializable;
 
 public class Request implements Serializable {
@@ -7,19 +9,17 @@ public class Request implements Serializable {
     private final String commandStringArgument;
     private final Serializable commandObjectArgument;
 
-    public Request(String commandName, String commandStringArgument, Serializable commandObjectArgument) {
+    private final User user;
+
+    public Request(String commandName, String commandStringArgument, Serializable commandObjectArgument, User user) {
         this.commandName = commandName;
         this.commandStringArgument = commandStringArgument;
         this.commandObjectArgument = commandObjectArgument;
+        this.user = user;
     }
-
-    public Request(String commandName, String commandStringArgument) {
-        this(commandName, commandStringArgument, null);
-    }
-
 
     public Request(){
-        this("", "");
+        this("", "", null, null);
     }
 
     /**
@@ -41,6 +41,10 @@ public class Request implements Serializable {
      */
     public Object getCommandObjectArgument() {
         return commandObjectArgument;
+    }
+
+    public User getUser(){
+        return this.user;
     }
 
     /**

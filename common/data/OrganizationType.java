@@ -1,5 +1,7 @@
 package laba6.common.data;
 
+import java.util.HashMap;
+
 public enum OrganizationType {
     COMMERCIAL("Commercial"),
     PUBLIC("Public"),
@@ -17,6 +19,17 @@ public enum OrganizationType {
             }
         }
         throw new IllegalArgumentException("There are no such organization type!");
+    }
+
+    public static Integer getId(OrganizationType organizationType){
+        HashMap<OrganizationType, Integer> hashMap = new HashMap<>();
+        hashMap.put(COMMERCIAL, 1);
+        hashMap.put(PUBLIC, 2);
+        hashMap.put(GOVERNMENT, 3);
+        hashMap.put(TRUST, 4);
+        hashMap.put(OJSC, 5);
+
+        return hashMap.get(organizationType);
     }
 
     OrganizationType(String name){

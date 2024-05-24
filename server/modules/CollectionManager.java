@@ -1,7 +1,9 @@
 package laba6.server.modules;
 
 import laba6.common.data.Organization;
+import laba6.common.data.User;
 import laba6.common.exeptions.CollectionIsEmptyException;
+import laba6.common.exeptions.InvalidObjectFieldException;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -14,7 +16,6 @@ import java.util.Stack;
 public class CollectionManager {
     private Stack<Organization> organizationCollection;
     private LocalDateTime lastSaveTime;
-//    private final CollectionFileManager collectionFileManager;
 
     private final DatabaseManager databaseManager;
     public CollectionManager(DatabaseManager databaseManager) {
@@ -45,6 +46,7 @@ public class CollectionManager {
 
     public void insertAt(Integer index, Organization el) throws IndexOutOfBoundsException{
         try {
+            databaseManager.addOrganization(el);
             organizationCollection.insertElementAt(el, index);
         } catch (IndexOutOfBoundsException e){
             throw new IndexOutOfBoundsException("Index must be in [0; "+organizationCollection.size()+"]");
@@ -113,7 +115,7 @@ public class CollectionManager {
      * @param organization A marine to add.
      */
     public void addToCollection(Organization organization) {
-        organizationCollection.add(organization);
+        organizationCollection.add(databaseManager.addOrganization(organization));
     }
 
     /**
@@ -122,13 +124,15 @@ public class CollectionManager {
      * @param organization An organization to remove.
      */
     public void removeFromCollection(Organization organization) {
+        databaseManager.removeOrganization(organization);
         organizationCollection.remove(organization);
     }
 
     /**
      * Clears the collection.
      */
-    public void clearCollection() {
+    public void clearCollection(User user) throws SQLException {
+        databaseManager.clearOrganization(user);
         organizationCollection.clear();
     }
 
@@ -160,7 +164,8 @@ public class CollectionManager {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } catch (InvalidObjectFieldException e) {
+            ResponseOutputer.appendln("Unexpected error while loading collection!");
         }
-//        organizationCollection = collectionFileManager.readCollection();
     }
 }
