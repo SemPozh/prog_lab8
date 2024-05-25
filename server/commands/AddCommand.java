@@ -1,6 +1,7 @@
 package laba6.server.commands;
 import laba6.common.data.Organization;
 import laba6.common.data.User;
+import laba6.common.exeptions.UserNotFoundException;
 import laba6.common.exeptions.WrongAmountOfElementsException;
 import laba6.server.modules.CollectionManager;
 import laba6.server.modules.ResponseOutputer;

@@ -4,6 +4,7 @@ import laba6.common.data.*;
 import laba6.common.exeptions.IncorrectAuthFileException;
 import laba6.common.exeptions.InvalidObjectFieldException;
 import laba6.common.exeptions.UserAlreadyExistsException;
+import laba6.common.exeptions.UserNotFoundException;
 import laba6.server.commands.Registration;
 
 import java.io.File;
@@ -107,7 +108,7 @@ public class DatabaseManager {
         return null;
     }
 
-    public Organization getOrganizationObjectFromResultSetRow(ResultSet resultSet) throws InvalidObjectFieldException{
+    public Organization getOrganizationObjectFromResultSetRow(ResultSet resultSet) throws InvalidObjectFieldException {
         try {
 
             Integer id = resultSet.getInt("id");
@@ -130,19 +131,17 @@ public class DatabaseManager {
         }
     }
 
-    public User authorizeUser(String username, String password) {
-        try {
-            PreparedStatement st = connection.prepareStatement("SELECT * FROM Users WHERE username=? AND password=?");
-            st.setString(1, username);
-            st.setString(2, password);
-            ResultSet resultSet = st.executeQuery();
-            if (resultSet.next()) {
-                return new User(resultSet.getInt("id"), resultSet.getString("username"), resultSet.getString("password"));
-            } else {
-                return null;
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+    public User authorizeUser(String username, String password) throws UserNotFoundException, SQLException {
+        PreparedStatement st = connection.prepareStatement("SELECT * FROM Users WHERE username=? AND password=?");
+        st.setString(1, username);
+        System.out.println(getUserByName(username).getPassword());
+        System.out.println(PasswordHasher.hashPassword(password));
+        st.setString(2, PasswordHasher.hashPassword(password));
+        ResultSet resultSet = st.executeQuery();
+        if (resultSet.next()) {
+            return new User(resultSet.getInt("id"), resultSet.getString("username"), resultSet.getString("password"));
+        } else {
+            throw new UserNotFoundException();
         }
     }
 
@@ -150,15 +149,15 @@ public class DatabaseManager {
         try {
             PreparedStatement ps = connection.prepareStatement("INSERT INTO Users (username, password) VALUES (?, ?)");
             ps.setString(1, username);
-            ps.setString(2, password);
+            ps.setString(2, PasswordHasher.hashPassword(password));
             ps.executeUpdate();
             return getUserByName(username);
-        } catch (SQLException e) {
+        } catch (SQLException | UserNotFoundException e) {
             throw new UserAlreadyExistsException("User with this username already exists");
         }
     }
 
-    public User getUserByName(String username) {
+    public User getUserByName(String username) throws UserNotFoundException {
         try {
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM Users WHERE username=?");
             ps.setString(1, username);
@@ -166,14 +165,14 @@ public class DatabaseManager {
             if (resultSet.next()) {
                 return new User(resultSet.getInt("id"), resultSet.getString("username"), resultSet.getString("password"));
             }
-            return null;
+            throw new UserNotFoundException();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
 
-    public Organization addOrganization(Organization organization) {
+    public Organization addOrganization(Organization organization) throws UserNotFoundException {
         try {
 
             Integer address_id = addAddress(organization.getOfficialAddress());
@@ -183,7 +182,7 @@ public class DatabaseManager {
             ps.setInt(2, organization.getCoordinates().getX());
             ps.setDouble(3, organization.getCoordinates().getY());
             ps.setTimestamp(4, Timestamp.from(organization.getCreationDate().toInstant()));
-            if (organization.getAnnualTurnover()==null){
+            if (organization.getAnnualTurnover() == null) {
                 ps.setNull(5, Types.INTEGER);
             } else {
                 ps.setInt(5, organization.getAnnualTurnover());
@@ -191,12 +190,12 @@ public class DatabaseManager {
             }
             ps.setInt(6, organization.getEmployeesCount());
             ps.setInt(7, OrganizationType.getId(organization.getType()));
-            if (address_id!=null){
+            if (address_id != null) {
                 ps.setInt(8, address_id);
             } else {
                 ps.setNull(8, Types.INTEGER);
             }
-            ps.setInt(9, organization.getCreatedBy().getId());
+            ps.setInt(9, getUserByName(organization.getCreatedBy().getUsername()).getId());
             ps.executeUpdate();
 
             ResultSet generatedKeys = ps.getGeneratedKeys();
@@ -229,7 +228,7 @@ public class DatabaseManager {
         st.executeUpdate();
     }
 
-    public void removeOrganization(Organization organization){
+    public void removeOrganization(Organization organization) {
         try {
             PreparedStatement st = connection.prepareStatement("DELETE  FROM Organization WHERE id=?");
             st.setInt(1, organization.getId());
@@ -239,20 +238,20 @@ public class DatabaseManager {
         }
     }
 
-    public void updateOrganization(Organization oldOrganization, Organization newOrganization){
+    public void updateOrganization(Organization oldOrganization, Organization newOrganization) {
         try {
             PreparedStatement st = connection.prepareStatement("UPDATE Organization SET name=?, x_coordinate=?, y_coordinate=?, annual_turnover=?, employees_count=?, organization_type_id=?, address_id=? WHERE id=?");
             st.setString(1, newOrganization.getName());
             st.setInt(2, newOrganization.getCoordinates().getX());
             st.setDouble(3, newOrganization.getCoordinates().getY());
-            if (newOrganization.getAnnualTurnover()!=null){
+            if (newOrganization.getAnnualTurnover() != null) {
                 st.setInt(4, newOrganization.getAnnualTurnover());
             } else {
                 st.setNull(4, Types.INTEGER);
             }
             st.setInt(5, newOrganization.getEmployeesCount());
             st.setInt(6, OrganizationType.getId(newOrganization.getType()));
-            if (newOrganization.getOfficialAddress()!=null){
+            if (newOrganization.getOfficialAddress() != null) {
                 st.setInt(7, addAddress(newOrganization.getOfficialAddress()));
             } else {
                 st.setNull(7, Types.INTEGER);

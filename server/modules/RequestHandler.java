@@ -13,7 +13,6 @@ public class RequestHandler extends RecursiveTask<Response> {
     private final CommandManager commandManager;
     private Request request;
 
-    private static User user;
 
     public RequestHandler(Request request, CollectionManager collectionManager, CommandManager commandManager){
         this.request = request;
@@ -21,9 +20,6 @@ public class RequestHandler extends RecursiveTask<Response> {
         this.commandManager = commandManager;
     }
 
-    public static void setUser(User user) {
-        RequestHandler.user = user;
-    }
 
     public CollectionManager getCollectionManager() {
         return collectionManager;
@@ -34,7 +30,7 @@ public class RequestHandler extends RecursiveTask<Response> {
         User hashedUser = request.getUser();
         ResponseCode responseCode = executeCommand(request.getCommandName(), request.getCommandStringArgument(),
                 request.getCommandObjectArgument(), hashedUser);
-        return new Response(responseCode, ResponseOutputer.getAndClear(), user);
+        return new Response(responseCode, ResponseOutputer.getAndClear());
     }
     /**
      * Executes a command from a request.
@@ -44,7 +40,7 @@ public class RequestHandler extends RecursiveTask<Response> {
      * @param commandObjectArgument Object argument for command.
      * @return Command execute status.
      */
-    private ResponseCode executeCommand(String commandName, String commandStringArgument,
+    private synchronized ResponseCode executeCommand(String commandName, String commandStringArgument,
                                         Object commandObjectArgument, User user) {
 
         HashMap<String, ServerCommandType> commands = commandManager.getCommands();

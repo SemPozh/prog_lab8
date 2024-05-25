@@ -23,13 +23,12 @@ public class Registration extends AbstractCommand {
                 String password = stringArgument.split(":")[1];
                 User newUser = collectionManager.getDatabaseManager().createUser(username, password);
                 ResponseOutputer.appendln("You was successfully authorized");
-                RequestHandler.setUser(newUser);
+                return true;
             } catch (ArrayIndexOutOfBoundsException e){
                 throw new WrongAmountOfElementsException();
             } catch (UserAlreadyExistsException e) {
                 ResponseOutputer.appendln(e.getMessage());
             }
-            return true;
         } catch (WrongAmountOfElementsException exception) {
             ResponseOutputer.appendln("Usage: '" + getName() + " " + getUsage() + "'");
         }

@@ -22,17 +22,36 @@ public class UserHandler {
     private final Stack<File> scriptStack = new Stack<>();
     private final Stack<InputHandler> scannerStack = new Stack<>();
     private static HashMap<String, ClientCommandType> commands;
-    private User user;
 
-
-    public UserHandler (InputHandler inputHandler){
+    public UserHandler(InputHandler inputHandler) {
         this.inputHandler = inputHandler;
         ClientCommands commandsList = new ClientCommands();
         commands = commandsList.getCommands();
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public Request authenticateUser() {
+        String userInput;
+        System.out.println("You are not authorized!");
+        System.out.print("Do you have an account? (y/n): ");
+        userInput = inputHandler.readLine();
+        if (userInput.equals("y")) {
+            System.out.print("Input your username: ");
+            String username = inputHandler.readLine();
+            System.out.print("Input your password: ");
+            String password = inputHandler.readLine();
+            return new Request("authorization", username + ":" + password, null, new User(username, password));
+        } else if (userInput.equals("n")) {
+            System.out.println("Let's create an account!");
+            System.out.print("Input your new username: ");
+            String username = inputHandler.readLine();
+            System.out.print("Input your new password: ");
+            String password = inputHandler.readLine();
+            return new Request("registration", username + ":" + password, null, new User(username, password));
+
+        } else {
+            System.out.println("Incorrect input! Type 'y' on 'n'");
+            return new Request();
+        }
     }
 
     /**
@@ -41,36 +60,13 @@ public class UserHandler {
      * @param serverResponseCode Last server's response code.
      * @return New request to server.
      */
-    public Request handle(ResponseCode serverResponseCode) {
+    public Request handle(ResponseCode serverResponseCode, User user) {
         String userInput;
         String[] userCommand;
         ProcessingCode processingCode;
         int rewriteAttempts = 0;
         try {
             do {
-                while (user==null){
-                    System.out.println("You are not authorized!");
-                    System.out.print("Do you have an account? (y/n): ");
-                    userInput = inputHandler.readLine();
-                    if (userInput.equals("y")){
-                        System.out.print("Input your username: ");
-                        String username = inputHandler.readLine();
-                        System.out.print("Input your password: ");
-                        String password = inputHandler.readLine();
-                        return new Request("authorization", username+":"+password, null, null);
-                    } else if (userInput.equals("n")){
-                        System.out.println("Let's create an account!");
-                        System.out.print("Input your new username: ");
-                        String username = inputHandler.readLine();
-                        System.out.print("Input your new password: ");
-                        String password = inputHandler.readLine();
-                        return new Request("registration", username+":"+password, null, null);
-
-                    } else {
-                        System.out.println("Incorrect input! Type 'y' on 'n'");
-                    }
-                }
-
                 try {
                     if (fileMode() && (serverResponseCode == ResponseCode.ERROR ||
                             serverResponseCode == ResponseCode.SERVER_EXIT))
@@ -88,18 +84,6 @@ public class UserHandler {
                             System.out.print(App.SYMBOL1);
                             System.out.println(userInput);
                         }
-                        userInput = inputHandler.readLine();
-                        if (!userInput.isEmpty()) {
-                            System.out.print("Login: ");
-                            System.out.println(userInput);
-                            username = userInput;
-                        }
-                        userInput = inputHandler.readLine();
-                        if (!userInput.isEmpty()) {
-                            System.out.print("Password: ");
-                            System.out.println(userInput);
-                            password = userInput;
-                        }
                     } else {
                         System.out.print(App.SYMBOL1);
                         userInput = inputHandler.readLine();
@@ -107,10 +91,10 @@ public class UserHandler {
                         username = inputHandler.readLine();
                         System.out.print("Password: ");
                         password = inputHandler.readLine();
-                    }
-                    if (!user.checkUser(username, password)){
-                        System.out.println("Incorrect Login/password. Access denied!");
-                        return new Request();
+                        if (!user.checkUser(username, password)) {
+                            System.out.println("Incorrect Login/password. Access denied!");
+                            return new Request();
+                        }
                     }
                     userCommand = (userInput.trim() + " ").split(" ", 2);
                     userCommand[1] = userCommand[1].trim();
@@ -168,29 +152,29 @@ public class UserHandler {
     }
 
 
-    public boolean fileMode(){
+    public boolean fileMode() {
         return !scriptStack.isEmpty();
     }
 
     private ProcessingCode processCommand(String command, String commandArgument) {
-        try{
+        try {
             ClientCommandType commandType = commands.get(command);
 
-            if (commandType == null){
+            if (commandType == null) {
                 System.out.println("No such command. Use help to show all commands");
                 return ProcessingCode.ERROR;
             }
 
             int argCount = 0;
-            if (!commandArgument.isEmpty()){
-                argCount=1;
+            if (!commandArgument.isEmpty()) {
+                argCount = 1;
             }
-            if (commandType.getArgumentsCount() != argCount){
+            if (commandType.getArgumentsCount() != argCount) {
                 throw new CommandUsageException(commandType.getCommandView());
             }
             return commandType.getProcessingCode();
         } catch (CommandUsageException exception) {
-            if (exception.getMessage() != null){
+            if (exception.getMessage() != null) {
                 System.out.println("Usage: '" + exception.getMessage() + "'");
             }
             return ProcessingCode.ERROR;

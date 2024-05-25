@@ -7,8 +7,13 @@ public class User implements Serializable {
     private String username;
     private String password;
 
+    public User(String username, String password){
+        setUsername(username);
+        setPassword(password);
+    }
+
     public User(Integer id, String username, String password){
-        this.id = id;
+        setId(id);
         setUsername(username);
         setPassword(password);
     }
@@ -25,7 +30,19 @@ public class User implements Serializable {
         return this.password.equals(password) & this.username.equals(username);
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public Integer getId() {
         return id;
+    }
+
+    public String getPassword() {
+        return password;
     }
 }

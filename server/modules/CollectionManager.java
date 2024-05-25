@@ -4,6 +4,7 @@ import laba6.common.data.Organization;
 import laba6.common.data.User;
 import laba6.common.exeptions.CollectionIsEmptyException;
 import laba6.common.exeptions.InvalidObjectFieldException;
+import laba6.common.exeptions.UserNotFoundException;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -12,6 +13,8 @@ import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Stack;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CollectionManager {
     private Stack<Organization> organizationCollection;
@@ -50,6 +53,8 @@ public class CollectionManager {
             organizationCollection.insertElementAt(el, index);
         } catch (IndexOutOfBoundsException e){
             throw new IndexOutOfBoundsException("Index must be in [0; "+organizationCollection.size()+"]");
+        } catch (UserNotFoundException e) {
+            ResponseOutputer.appendln("User in your organization doesn't exist");
         }
     }
 
@@ -59,7 +64,7 @@ public class CollectionManager {
 
 
     public String getCollectionInfo(){
-        return "Type: " + collectionType() + "\n" + "Size: " + collectionSize() + "\n" + "Elements type: Organization" + "\n" + "Last save time: " + getLastSaveTime();
+        return "Type: " + collectionType() + "\n" + "Size: " + collectionSize() + "\n" + "Elements type: Organization";
     }
 
     /**
@@ -115,7 +120,11 @@ public class CollectionManager {
      * @param organization A marine to add.
      */
     public void addToCollection(Organization organization) {
-        organizationCollection.add(databaseManager.addOrganization(organization));
+        try {
+            organizationCollection.add(databaseManager.addOrganization(organization));
+        } catch (UserNotFoundException e) {
+            ResponseOutputer.appendln("User in your organization not found!");
+        }
     }
 
     /**

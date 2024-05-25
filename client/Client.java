@@ -1,10 +1,12 @@
 package laba6.client;
 
 import laba6.client.modules.UserHandler;
+import laba6.common.data.User;
 import laba6.common.exeptions.ConnectionErrorException;
 import laba6.common.exeptions.NotInDeclaredLimitsException;
 import laba6.common.interaction.Request;
 import laba6.common.interaction.Response;
+import laba6.common.interaction.ResponseCode;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -20,6 +22,7 @@ public class Client {
     private SocketChannel socketChannel;
     private ObjectOutputStream serverWriter;
     private ObjectInputStream serverReader;
+    private User user;
 
     public Client(String host, int port, int reconnectionTimeout, int maxReconnectionAttempts, UserHandler userHandler) {
         this.host = host;
@@ -35,6 +38,7 @@ public class Client {
             while (processingStatus) {
                 try {
                     connectToServer();
+                    authenticateUserProcess();
                     processingStatus = processRequestToServer();
                 } catch (ConnectionErrorException exception) {
                     if (reconnectionAttempts >= maxReconnectionAttempts) {
@@ -93,12 +97,11 @@ public class Client {
         Response serverResponse = null;
         do {
             try {
-                requestToServer = serverResponse != null ? userHandler.handle(serverResponse.getResponseCode()) :
-                        userHandler.handle(null);
+                requestToServer = serverResponse != null ? userHandler.handle(serverResponse.getResponseCode(), user) :
+                        userHandler.handle(null, user);
                 if (requestToServer.isEmpty()) continue;
                 serverWriter.writeObject(requestToServer);
                 serverResponse = (Response) serverReader.readObject();
-                userHandler.setUser(serverResponse.getUser());
                 System.out.println(serverResponse.getResponseBody());
             } catch (InvalidClassException | NotSerializableException exception) {
                 System.out.println("An error occurred while sending data to the server!");
@@ -117,5 +120,29 @@ public class Client {
             }
         } while (!requestToServer.getCommandName().equals("exit"));
         return false;
+    }
+
+    private void authenticateUserProcess(){
+        Request requestToServer = null;
+        Response serverResponse = null;
+        do {
+            try{
+                requestToServer = userHandler.authenticateUser();
+                if (requestToServer.isEmpty()) continue;
+                serverWriter.writeObject(requestToServer);
+                serverResponse = (Response) serverReader.readObject();
+                System.out.println(serverResponse.getResponseBody());
+            } catch (IOException e) {
+                System.out.println("The connection to the server has been lost!");
+                try {
+                    connectToServer();
+                } catch (ConnectionErrorException | NotInDeclaredLimitsException reconnectionException) {
+                    System.out.println("Try logging in again later.");
+                }
+            } catch (ClassNotFoundException e) {
+                System.out.println("An error occurred while reading received data!");
+            }
+        } while (serverResponse == null || !serverResponse.getResponseCode().equals(ResponseCode.OK));
+        user = requestToServer.getUser();
     }
 }
