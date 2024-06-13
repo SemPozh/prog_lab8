@@ -1,10 +1,10 @@
-package laba7.server.modules;
+package laba8.laba8.server.modules;
 
-import laba7.common.data.*;
-import laba7.common.exeptions.ConnectionErrorException;
-import laba7.common.exeptions.InvalidObjectFieldException;
-import laba7.common.exeptions.UserAlreadyExistsException;
-import laba7.common.exeptions.UserNotFoundException;
+import laba8.laba8.common.data.*;
+import laba8.laba8.common.exeptions.ConnectionErrorException;
+import laba8.laba8.common.exeptions.InvalidObjectFieldException;
+import laba8.laba8.common.exeptions.UserAlreadyExistsException;
+import laba8.laba8.common.exeptions.UserNotFoundException;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.io.IOException;
@@ -113,9 +113,15 @@ public class DatabaseManager {
             double y = resultSet.getDouble("y_coordinate");
             ZonedDateTime creationDate = resultSet.getTimestamp("creation_date").toInstant().atZone(ZoneId.systemDefault());
             Integer annualTurnover = resultSet.getInt("annual_turnover");
+            if (resultSet.wasNull()){
+                annualTurnover = null;
+            }
             Integer employeesCount = resultSet.getInt("employees_count");
             OrganizationType organizationType = getOrganizationTypeById(connection, resultSet.getInt("organization_type_id"));
             Address address = getAddressById(connection, resultSet.getInt("address_id"));
+            if (resultSet.wasNull()){
+                address = null;
+            }
             User createdBy = getUserById(connection, resultSet.getInt("user_id"));
             Organization organization = new Organization(id, name, new Coordinates(x, y), creationDate, employeesCount, organizationType, createdBy);
 
@@ -200,7 +206,6 @@ public class DatabaseManager {
             generatedKeys.next();
             organization.setId(ps.getGeneratedKeys().getInt(1));
             ps.close();
-
             generatedKeys.close();
             return organization;
         } catch (SQLException e) {
@@ -216,22 +221,21 @@ public class DatabaseManager {
             PreparedStatement ps1 = connection.prepareStatement("INSERT INTO Address (zip_code) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
             ps1.setString(1, address.getZipCode());
             ps1.executeUpdate();
-
             ResultSet generatedKeys = ps1.getGeneratedKeys();
             generatedKeys.next();
-
-
-            ps1.close();
+            Integer address_id = generatedKeys.getInt(1);
             generatedKeys.close();
-            return generatedKeys.getInt(1);
+            ps1.close();
+            return address_id;
         }
     }
 
-    public void clearOrganization(Connection connection, User user) throws SQLException {
+    public void clearOrganization(Connection connection, User user) throws SQLException, UserNotFoundException {
         PreparedStatement st = connection.prepareStatement("DELETE FROM Organization WHERE user_id=?");
-        st.setInt(1, user.getId());
+        st.setInt(1, getUserByName(connection, user.getUsername()).getId());
         st.executeUpdate();
         st.close();
+
     }
 
     public void removeOrganization(Connection connection, Organization organization) {

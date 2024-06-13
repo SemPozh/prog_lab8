@@ -1,6 +1,5 @@
 package laba8.laba8.client.modules;
 
-import laba8.laba8.client.App;
 import laba8.laba8.common.data.Organization;
 import laba8.laba8.common.data.User;
 import laba8.laba8.common.exeptions.CommandUsageException;
@@ -17,47 +16,19 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Stack;
 
-public class UserHandler {
+public class ScriptHandler {
+    private final int maxRewriteAttempts = 1;
+
     private InputHandler inputHandler;
-    private final Stack<File> scriptStack = new Stack<>();
-    private final Stack<InputHandler> scannerStack = new Stack<>();
+    private Stack<File> scriptStack = new Stack<>();
+    private Stack<InputHandler> scannerStack = new Stack<>();
     private static HashMap<String, ClientCommandType> commands;
-
-    public UserHandler(InputHandler inputHandler) {
-        this.inputHandler = inputHandler;
-        ClientCommands commandsList = new ClientCommands();
-        commands = commandsList.getCommands();
-    }
-
-    public Request authenticateUser() {
-        String userInput;
-        System.out.println("You are not authorized!");
-        System.out.print("Do you have an account? (y/n): ");
-        userInput = inputHandler.readLine();
-        if (userInput.equals("y")) {
-            System.out.print("Input your username: ");
-            String username = inputHandler.readLine();
-            System.out.print("Input your password: ");
-            String password = inputHandler.readLine();
-            return new Request("authorization", username + ":" + password, null, new User(username, password));
-        } else if (userInput.equals("n")) {
-            System.out.println("Let's create an account!");
-            System.out.print("Input your new username: ");
-            String username = inputHandler.readLine();
-            System.out.print("Input your new password: ");
-            String password = inputHandler.readLine();
-            return new Request("registration", username + ":" + password, null, new User(username, password));
-
-        } else {
-            System.out.println("Incorrect input! Type 'y' on 'n'");
-            return new Request();
-        }
-    }
 
     /**
      * Receives user input.
      *
-     * @param serverResponseCode Last server's response code.
+     * @param serverResponseCode Previous response code.
+     * @param user               User object.
      * @return New request to server.
      */
     public Request handle(ResponseCode serverResponseCode, User user) {
@@ -68,42 +39,35 @@ public class UserHandler {
         try {
             do {
                 try {
-                    if (fileMode() && (serverResponseCode == ResponseCode.ERROR ||
-                            serverResponseCode == ResponseCode.SERVER_EXIT))
+                    if (serverResponseCode == ResponseCode.ERROR || serverResponseCode == ResponseCode.SERVER_EXIT)
                         throw new IncorrectInputInScriptException();
-                    while (fileMode() && !inputHandler.scanner.hasNextLine()) {
+                    while (!scannerStack.isEmpty() && !inputHandler.scanner.hasNextLine()) {
                         inputHandler.close();
                         inputHandler = scannerStack.pop();
-                        System.out.println("Back to script '" + scriptStack.pop().getName() + "'...");
+                        if (!scannerStack.isEmpty()) scriptStack.pop();
+                        else return null;
                     }
-                    if (fileMode()) {
-                        userInput = inputHandler.readLine();
-                        if (!userInput.isEmpty()) {
-                            System.out.print(App.SYMBOL1);
-                            System.out.println(userInput);
-                        }
-                    } else {
-                        System.out.print(App.SYMBOL1);
-                        userInput = inputHandler.readLine();
+                    userInput = inputHandler.scanner.nextLine();
+                    if (!userInput.isEmpty()) {
+//                        Outputer.print(App.PS1);
+//                        Outputer.println(userInput);
                     }
                     userCommand = (userInput.trim() + " ").split(" ", 2);
                     userCommand[1] = userCommand[1].trim();
                 } catch (NoSuchElementException | IllegalStateException exception) {
-                    System.out.println();
-                    System.out.println("Error while typing command");
+//                    Outputer.println();
+//                    Outputer.printerror("CommandErrorException");
                     userCommand = new String[]{"", ""};
                     rewriteAttempts++;
-                    int maxRewriteAttempts = 2;
                     if (rewriteAttempts >= maxRewriteAttempts) {
-                        System.out.println("Maximum attempts is accepted!");
+//                        Outputer.printerror("RewriteAttemptsException");
                         System.exit(0);
                     }
                 }
-
                 processingCode = processCommand(userCommand[0], userCommand[1]);
-            } while (processingCode == ProcessingCode.ERROR && !fileMode() || userCommand[0].isEmpty());
+            } while (userCommand[0].isEmpty());
             try {
-                if (fileMode() && (serverResponseCode == ResponseCode.ERROR || processingCode == ProcessingCode.ERROR))
+                if (serverResponseCode == ResponseCode.ERROR || processingCode == ProcessingCode.ERROR)
                     throw new IncorrectInputInScriptException();
                 switch (processingCode) {
                     case OBJECT:
@@ -122,30 +86,60 @@ public class UserHandler {
                         break;
                 }
             } catch (FileNotFoundException exception) {
-                System.out.println("File with script not found!");
+//                Outputer.printerror("ScriptFileNotFoundException");
+                throw new IncorrectInputInScriptException();
             } catch (ScriptRecursionException exception) {
-                System.out.println("Scripts can't be executed with recursion!");
+//                Outputer.printerror("ScriptRecursionException");
                 throw new IncorrectInputInScriptException();
             } catch (InvalidObjectFieldException e) {
-                System.out.println("Invalid data!");
+                throw new RuntimeException(e);
             }
         } catch (IncorrectInputInScriptException exception) {
-            System.out.println("Executing stopped!");
+//            OutputerUI.error("IncorrectInputInScriptException");
             while (!scannerStack.isEmpty()) {
                 inputHandler.close();
                 inputHandler = scannerStack.pop();
             }
             scriptStack.clear();
-            return new Request();
+            return null;
         }
         return new Request(userCommand[0], userCommand[1], null, user);
     }
 
-
-    public boolean fileMode() {
-        return !scriptStack.isEmpty();
+    public ScriptHandler(File scriptFile) {
+        try {
+            inputHandler = new InputHandler(new Scanner(scriptFile));
+            scannerStack.add(inputHandler);
+            scriptStack.add(scriptFile);
+            ClientCommands commandsList = new ClientCommands();
+            commands = commandsList.getCommands();
+        } catch (Exception exception) { /* ? */ }
     }
 
+    /**
+     * Generates marine to add.
+     *
+     * @return Marine to add.
+     * @throws IncorrectInputInScriptException When something went wrong in script.
+     */
+    private Organization generateOrganizationAdd(User user) throws IncorrectInputInScriptException, InvalidObjectFieldException {
+        OrganizationAsker organizationAsker = new OrganizationAsker(inputHandler);
+        Organization organization = new Organization(
+                organizationAsker.askName(),
+                organizationAsker.askCoordinates(),
+                organizationAsker.askEmployeesCount(),
+                organizationAsker.askOrganizationType(),
+                user);
+        organization.setAnnualTurnover(organizationAsker.askAnnualTurnover());
+        organization.setOfficialAddress(organizationAsker.askAddress());
+        return organization;
+    }
+
+    /**
+     * Processes the entered command.
+     *
+     * @return Status of code.
+     */
     private ProcessingCode processCommand(String command, String commandArgument) {
         try {
             ClientCommandType commandType = commands.get(command);

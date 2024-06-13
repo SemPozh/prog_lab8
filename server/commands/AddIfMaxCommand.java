@@ -1,11 +1,12 @@
-package laba7.server.commands;
+package laba8.laba8.server.commands;
 
-import laba7.common.data.Organization;
-import laba7.common.data.User;
-import laba7.common.exeptions.ConnectionErrorException;
-import laba7.common.exeptions.WrongAmountOfElementsException;
-import laba7.server.modules.CollectionManager;
-import laba7.server.modules.ResponseOutputer;
+import laba8.laba8.common.data.Organization;
+import laba8.laba8.common.data.User;
+import laba8.laba8.common.exeptions.ConnectionErrorException;
+import laba8.laba8.common.exeptions.UserNotFoundException;
+import laba8.laba8.common.exeptions.WrongAmountOfElementsException;
+import laba8.laba8.server.modules.CollectionManager;
+import laba8.laba8.server.modules.ResponseOutputer;
 
 import java.sql.SQLException;
 
@@ -30,15 +31,22 @@ public class AddIfMaxCommand extends AbstractCommand {
             Organization organization = (Organization) objectArgument;
             if (collectionManager.collectionSize() == 0 || organization.compareTo(collectionManager.getLast()) < 0) {
                 collectionManager.addToCollection(organization);
-                ResponseOutputer.appendln("Organization added successfully!");
+                ResponseOutputer.append("OrganizationWasAdded");
+                collectionManager.loadCollection();
                 return true;
-            } else ResponseOutputer.appenderror("The value of the organization is less than the value of the largest organization!");
+            } else ResponseOutputer.appenderror("OrganizationSizeException");
         } catch (WrongAmountOfElementsException exception) {
-            ResponseOutputer.appendln("Usage: '" + getName() + " " + getUsage() + "'");
+            ResponseOutputer.append("Using");
+            ResponseOutputer.appendargs(getName() + " " + getUsage());
         } catch (ClassCastException exception) {
-            ResponseOutputer.appenderror("The object passed by the client is invalid!");
+            ResponseOutputer.appenderror("ClientObjectException");
         } catch (SQLException | ConnectionErrorException e) {
-            ResponseOutputer.appendln("Server error, try again later");
+            ResponseOutputer.append("DatabaseHandlingException");
+            if (!e.getMessage().isEmpty()){
+                ResponseOutputer.appendargs(e.getMessage());
+            }
+        } catch (UserNotFoundException e) {
+            ResponseOutputer.appenderror("UserNotFoundException");
         }
         return false;
     }

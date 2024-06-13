@@ -1,10 +1,13 @@
-package laba7.server.commands;
+package laba8.laba8.server.commands;
 
-import laba7.common.data.User;
-import laba7.common.exeptions.CollectionIsEmptyException;
-import laba7.common.exeptions.WrongAmountOfElementsException;
-import laba7.server.modules.CollectionManager;
-import laba7.server.modules.ResponseOutputer;
+import laba8.laba8.common.data.User;
+import laba8.laba8.common.exeptions.CollectionIsEmptyException;
+import laba8.laba8.common.exeptions.ConnectionErrorException;
+import laba8.laba8.common.exeptions.WrongAmountOfElementsException;
+import laba8.laba8.server.modules.CollectionManager;
+import laba8.laba8.server.modules.ResponseOutputer;
+
+import java.sql.SQLException;
 
 /**
  * Command 'max_by_melee_weapon'. Prints the element of the collection with maximum melee weapon.
@@ -24,12 +27,21 @@ public class MinByEmployeesCountCommand extends AbstractCommand {
     public boolean execute(String stringArgument, Object objectArgument, CollectionManager collectionManager, User user) {
         try {
             if (!stringArgument.isEmpty() || objectArgument != null) throw new WrongAmountOfElementsException();
-            ResponseOutputer.appendln(collectionManager.minByEmployeesCount());
+            collectionManager.loadCollection();
+            ResponseOutputer.append("MinByEmployeesCount");
+            ResponseOutputer.appendargs(String.valueOf(collectionManager.minByEmployeesCount()));
+
             return true;
         } catch (WrongAmountOfElementsException exception) {
-            ResponseOutputer.appendln("Usage: '" + getName() + " " + getUsage() + "'");
+            ResponseOutputer.append("Using");
+            ResponseOutputer.appendargs(getName() + " " + getUsage());
         } catch (CollectionIsEmptyException exception) {
-            ResponseOutputer.appenderror("The collection is empty!");
+            ResponseOutputer.appenderror("CollectionIsEmptyException");
+        } catch (SQLException | ConnectionErrorException e) {
+            ResponseOutputer.appenderror("DatabaseHandlingException");
+            if (!e.getMessage().isEmpty()){
+                ResponseOutputer.appendargs(e.getMessage());
+            }
         }
         return true;
     }

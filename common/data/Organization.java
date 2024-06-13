@@ -1,6 +1,6 @@
-package laba7.common.data;
+package laba8.laba8.common.data;
 
-import laba7.common.exeptions.InvalidObjectFieldException;
+import laba8.laba8.common.exeptions.InvalidObjectFieldException;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -34,7 +34,7 @@ public class Organization implements Comparable, Serializable {
         if (!name.isEmpty()){
             this.name = name;
         } else {
-            throw new InvalidObjectFieldException("Organization name can't be empty");
+            throw new InvalidObjectFieldException("NameCantBeEmptyException");
         }
     }
 
@@ -51,7 +51,7 @@ public class Organization implements Comparable, Serializable {
             if (annualTurnover > 0){
                 this.annualTurnover = annualTurnover;
             } else {
-                throw new InvalidObjectFieldException("Field annual turnover must be positive");
+                throw new InvalidObjectFieldException("AnnualTurnoverSignException");
             }
         }
     }
@@ -60,7 +60,7 @@ public class Organization implements Comparable, Serializable {
         if (employeesCount > 0){
             this.employeesCount = employeesCount;
         } else {
-            throw new InvalidObjectFieldException("Field employees count must be positive");
+            throw new InvalidObjectFieldException("EmployeeCountSignException");
         }
 
     }

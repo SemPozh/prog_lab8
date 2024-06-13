@@ -1,6 +1,6 @@
-package laba7.common.interaction;
+package laba8.laba8.common.interaction;
 
-import laba7.common.data.User;
+import laba8.laba8.common.data.User;
 
 import java.io.Serializable;
 

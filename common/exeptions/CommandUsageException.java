@@ -1,4 +1,4 @@
-package laba7.common.exeptions;
+package laba8.laba8.common.exeptions;
 
 /**
  * Is throwed when command can't be used.

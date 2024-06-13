@@ -1,7 +1,7 @@
-package laba7.server.commands;
+package laba8.laba8.server.commands;
 
-import laba7.common.data.User;
-import laba7.server.modules.CollectionManager;
+import laba8.laba8.common.data.User;
+import laba8.laba8.server.modules.CollectionManager;
 
 /**
  * Interface for all commands.

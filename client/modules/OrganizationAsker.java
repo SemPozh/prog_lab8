@@ -1,10 +1,10 @@
-package laba7.client.modules;
+package laba8.laba8.client.modules;
 
-import laba7.client.App;
-import laba7.client.validators.*;
-import laba7.common.data.*;
-import laba7.common.exeptions.IncorrectInputInScriptException;
-import laba7.common.exeptions.InvalidObjectFieldException;
+import laba8.laba8.client.App;
+import laba8.laba8.client.validators.*;
+import laba8.laba8.common.data.*;
+import laba8.laba8.common.exeptions.IncorrectInputInScriptException;
+import laba8.laba8.common.exeptions.InvalidObjectFieldException;
 import java.util.NoSuchElementException;
 
 public class OrganizationAsker {
@@ -40,14 +40,10 @@ public class OrganizationAsker {
                 NameValidator nameValidator = new NameValidator();
                 name = nameValidator.validate(name);
                 break;
-            } catch (NoSuchElementException exception) {
-                System.out.println(exception.getMessage());
-                if (fileMode) throw new IncorrectInputInScriptException();
-            } catch (InvalidObjectFieldException e) {
-                System.out.println("The name cannot be empty!");
-                if (fileMode) throw new IncorrectInputInScriptException();
+            } catch (NoSuchElementException | InvalidObjectFieldException exception) {
+                if (fileMode) throw new IncorrectInputInScriptException(exception.getMessage());
             } catch (IllegalStateException exception) {
-                System.out.println("Unexpected error!");
+                PrinterUI.error("Unexpected error!");
                 System.exit(0);
             }
         }
@@ -72,15 +68,11 @@ public class OrganizationAsker {
                 XCoordinateValidator xCoordinateValidator = new XCoordinateValidator();
                 x = xCoordinateValidator.validate(strX);
                 break;
-            } catch (NoSuchElementException exception) {
-                System.out.println("X coordinate not recognized!");
-                if (fileMode) throw new IncorrectInputInScriptException();
+            } catch (NoSuchElementException | InvalidObjectFieldException exception) {
+                if (fileMode) throw new IncorrectInputInScriptException(exception.getMessage());
             } catch (NullPointerException | IllegalStateException exception) {
-                System.out.println("Unexpected error!");
+                PrinterUI.error("Unexpected error!");
                 System.exit(0);
-            } catch (InvalidObjectFieldException e) {
-                System.out.println(e.getMessage());
-                if (fileMode) throw new IncorrectInputInScriptException();
             }
         }
         return x;
@@ -104,15 +96,11 @@ public class OrganizationAsker {
                 YCoordinateValidator yCoordinateValidator = new YCoordinateValidator();
                 y = yCoordinateValidator.validate(strY);
                 break;
-            } catch (NoSuchElementException exception) {
-                System.out.println("Y coordinate not recognized!");
-                if (fileMode) throw new IncorrectInputInScriptException();
+            } catch (NoSuchElementException | InvalidObjectFieldException exception) {
+                if (fileMode) throw new IncorrectInputInScriptException(exception.getMessage());
             } catch (NullPointerException | IllegalStateException exception) {
-                System.out.println("Unexpected error!");
+                PrinterUI.error("Unexpected error!");
                 System.exit(0);
-            } catch (InvalidObjectFieldException e) {
-                System.out.println(e.getMessage());
-                if (fileMode) throw new IncorrectInputInScriptException();
             }
         }
         return y;
@@ -132,8 +120,7 @@ public class OrganizationAsker {
         try {
             return new Coordinates(x, y);
         } catch (InvalidObjectFieldException e) {
-            System.out.println(e.getMessage());
-            if (fileMode) throw new IncorrectInputInScriptException();
+            if (fileMode) throw new IncorrectInputInScriptException(e.getMessage());
             return null;
         }
     }
@@ -156,15 +143,11 @@ public class OrganizationAsker {
                 AnnualTurnoverValidator annualTurnoverValidator = new AnnualTurnoverValidator();
                 annualTurnover = annualTurnoverValidator.validate(strAnnualTurnover);
                 break;
-            } catch (NoSuchElementException exception) {
-                System.out.println("Annual turnover not recognized!");
-                if (fileMode) throw new IncorrectInputInScriptException();
+            } catch (NoSuchElementException | InvalidObjectFieldException exception) {
+                if (fileMode) throw new IncorrectInputInScriptException(exception.getMessage());
             } catch (NullPointerException | IllegalStateException exception) {
-                System.out.println("Unexpected error!");
+                PrinterUI.error("Unexpected error!");
                 System.exit(0);
-            } catch (InvalidObjectFieldException e) {
-                System.out.println(e.getMessage());
-                if (fileMode) throw new IncorrectInputInScriptException();
             }
         }
         return annualTurnover;
@@ -188,15 +171,11 @@ public class OrganizationAsker {
                 EmployeeCountValidator employeeCountValidator = new EmployeeCountValidator();
                 employeesCount = employeeCountValidator.validate(strEmployeesCount);
                 break;
-            } catch (NoSuchElementException exception) {
-                System.out.println("Employees count not recognized!");
-                if (fileMode) throw new IncorrectInputInScriptException();
+            } catch (NoSuchElementException | InvalidObjectFieldException exception) {
+                if (fileMode) throw new IncorrectInputInScriptException(exception.getMessage());
             } catch (NullPointerException | IllegalStateException exception) {
-                System.out.println("Unexpected error!");
+                PrinterUI.error("Unexpected error!");
                 System.exit(0);
-            } catch (InvalidObjectFieldException e) {
-                System.out.println(e.getMessage());
-                if (fileMode) throw new IncorrectInputInScriptException();
             }
         }
         return employeesCount;
@@ -220,15 +199,11 @@ public class OrganizationAsker {
                 organizationType = organizationTypeValidator.validate(strOrganizationType);
                 if (fileMode) System.out.println(strOrganizationType);
                 break;
-            } catch (NoSuchElementException exception) {
-                System.out.println("Organization not recognized!");
-                if (fileMode) throw new IncorrectInputInScriptException();
+            } catch (NoSuchElementException | InvalidObjectFieldException exception) {
+                if (fileMode) throw new IncorrectInputInScriptException(exception.getMessage());
             } catch (IllegalStateException exception) {
-                System.out.println("Unexpected error!");
+                PrinterUI.error("Unexpected error!");
                 System.exit(0);
-            } catch (InvalidObjectFieldException e) {
-                System.out.println(e.getMessage());
-                if (fileMode) throw new IncorrectInputInScriptException();
             }
         }
         return organizationType;
@@ -253,11 +228,10 @@ public class OrganizationAsker {
                 address = zipCodeValidator.validate(zipCode);
                 break;
             } catch (IllegalStateException exception) {
-                System.out.println("Unexpected error!");
+                PrinterUI.error("Unexpected error!");
                 System.exit(0);
             } catch (InvalidObjectFieldException e) {
-                System.out.println(e.getMessage());
-                if (fileMode) throw new IncorrectInputInScriptException();
+                if (fileMode) throw new IncorrectInputInScriptException(e.getMessage());
             }
         }
         return address;

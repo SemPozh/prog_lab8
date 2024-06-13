@@ -1,4 +1,4 @@
-package laba7.client.modules;
+package laba8.laba8.client.modules;
 
 public class ClientCommandType {
     ProcessingCode processingCode;

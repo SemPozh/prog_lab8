@@ -1,6 +1,6 @@
-package laba7.common.data;
+package laba8.laba8.common.data;
 
-import laba7.common.exeptions.InvalidObjectFieldException;
+import laba8.laba8.common.exeptions.InvalidObjectFieldException;
 
 import java.io.Serializable;
 
@@ -19,7 +19,7 @@ public class Coordinates implements Serializable {
         if (validateX(x)){
             this.x = x;
         } else {
-            throw new InvalidObjectFieldException("X-coordinate can't be <= -393");
+            throw new InvalidObjectFieldException("XCoordinateLimitsException");
         }
     }
 
@@ -27,7 +27,7 @@ public class Coordinates implements Serializable {
         if (validateY(y)){
             this.y = y;
         } else {
-            throw new InvalidObjectFieldException("Y-coordinate can't be > 518");
+            throw new InvalidObjectFieldException("YCoordinateLimitsException");
         }
     }
 

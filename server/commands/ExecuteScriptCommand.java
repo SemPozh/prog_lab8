@@ -1,9 +1,9 @@
-package laba7.server.commands;
+package laba8.laba8.server.commands;
 
-import laba7.common.data.User;
-import laba7.common.exeptions.WrongAmountOfElementsException;
-import laba7.server.modules.CollectionManager;
-import laba7.server.modules.ResponseOutputer;
+import laba8.laba8.common.data.User;
+import laba8.laba8.common.exeptions.WrongAmountOfElementsException;
+import laba8.laba8.server.modules.CollectionManager;
+import laba8.laba8.server.modules.ResponseOutputer;
 
 /**
  * Command 'execute_script'. Executes scripts from a file. Ectually only checks argument and prints messages.
@@ -24,7 +24,8 @@ public class ExecuteScriptCommand extends AbstractCommand {
             if (stringArgument.isEmpty() || objectArgument != null) throw new WrongAmountOfElementsException();
             return true;
         } catch (WrongAmountOfElementsException exception) {
-            ResponseOutputer.appendln("Usage: '" + getName() + " " + getUsage() + "'");
+            ResponseOutputer.append("Using");
+            ResponseOutputer.appendargs(getName() + " " + getUsage());
         }
         return false;
     }

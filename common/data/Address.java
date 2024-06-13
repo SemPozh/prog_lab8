@@ -1,4 +1,4 @@
-package laba7.common.data;
+package laba8.laba8.common.data;
 
 import java.io.Serializable;
 

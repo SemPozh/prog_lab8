@@ -1,10 +1,10 @@
-package laba7.server.modules;
+package laba8.laba8.server.modules;
 
-import laba7.common.interaction.Request;
-import laba7.common.interaction.Response;
-import laba7.common.interaction.ResponseCode;
-import laba7.server.App;
-import laba7.server.Server;
+import laba8.laba8.common.interaction.Request;
+import laba8.laba8.common.interaction.Response;
+import laba8.laba8.common.interaction.ResponseCode;
+import laba8.laba8.server.App;
+import laba8.laba8.server.Server;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

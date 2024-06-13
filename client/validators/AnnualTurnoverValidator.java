@@ -1,7 +1,7 @@
-package laba7.client.validators;
+package laba8.laba8.client.validators;
 
 
-import laba7.common.exeptions.InvalidObjectFieldException;
+import laba8.laba8.common.exeptions.InvalidObjectFieldException;
 
 public class AnnualTurnoverValidator extends Validator<Integer>{
     @Override
@@ -10,11 +10,11 @@ public class AnnualTurnoverValidator extends Validator<Integer>{
             try {
                 int annualTurnover = Integer.parseInt(value);
                 if (annualTurnover <= 0){
-                    throw new InvalidObjectFieldException("Annual turnover must be > 0");
+                    throw new InvalidObjectFieldException("AnnualTurnoverSignException");
                 }
                 return annualTurnover;
             } catch (NumberFormatException e){
-                throw new InvalidObjectFieldException("Annual turnover defined incorrectly!");
+                throw new InvalidObjectFieldException("AnnualTurnoverMustBeInteger");
             }
         } else {
             return null;

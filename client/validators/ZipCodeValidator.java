@@ -1,7 +1,7 @@
-package laba7.client.validators;
+package laba8.laba8.client.validators;
 
-import laba7.common.data.Address;
-import laba7.common.exeptions.InvalidObjectFieldException;
+import laba8.laba8.common.data.Address;
+import laba8.laba8.common.exeptions.InvalidObjectFieldException;
 
 public class ZipCodeValidator extends Validator<Address>{
     @Override

@@ -1,4 +1,4 @@
-package laba7.common.data;
+package laba8.laba8.common.data;
 
 import java.io.Serializable;
 
@@ -44,5 +44,14 @@ public class User implements Serializable {
 
     public String getPassword() {
         return password;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.getClass().equals(this.getClass())){
+            return this.username.equals(((User) obj).getUsername());
+        }
+        return false;
     }
 }

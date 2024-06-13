@@ -1,6 +1,6 @@
-package laba7.client.validators;
+package laba8.laba8.client.validators;
 
-import laba7.common.exeptions.InvalidObjectFieldException;
+import laba8.laba8.common.exeptions.InvalidObjectFieldException;
 
 public class IDValidator extends Validator<Integer>{
     @Override
@@ -10,10 +10,10 @@ public class IDValidator extends Validator<Integer>{
                 int id = Integer.parseInt(value);
                 return id;
             } catch (NumberFormatException e){
-                throw new InvalidObjectFieldException("ID defined incorrectly!");
+                throw new InvalidObjectFieldException("IDMustBeInteger");
             }
         } else {
-            throw new InvalidObjectFieldException("ID must be defined!");
+            throw new InvalidObjectFieldException("IDUndefinedException");
         }
     }
 }

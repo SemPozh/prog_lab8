@@ -1,4 +1,4 @@
-package laba7.server.commands;
+package laba8.laba8.server.commands;
 
 /**
  * Abstract Command class contains Object methods, name and description.

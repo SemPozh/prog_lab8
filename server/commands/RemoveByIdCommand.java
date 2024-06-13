@@ -1,11 +1,11 @@
-package laba7.server.commands;
+package laba8.laba8.server.commands;
 
-import laba7.client.validators.IDValidator;
-import laba7.common.data.Organization;
-import laba7.common.data.User;
-import laba7.common.exeptions.*;
-import laba7.server.modules.CollectionManager;
-import laba7.server.modules.ResponseOutputer;
+import laba8.laba8.client.validators.IDValidator;
+import laba8.laba8.common.data.Organization;
+import laba8.laba8.common.data.User;
+import laba8.laba8.common.exeptions.*;
+import laba8.laba8.server.modules.CollectionManager;
+import laba8.laba8.server.modules.ResponseOutputer;
 
 import java.sql.SQLException;
 
@@ -32,24 +32,30 @@ public class RemoveByIdCommand extends AbstractCommand {
             Integer id = idValidator.validate(stringArgument);
             Organization organization = collectionManager.getById(id);
             if (organization == null) throw new OrganizationNotFoundException();
-            if (organization.getCreatedBy() != user){
-                throw new CollectionAccessException("You are not owner of this Organization and can't remove it!");
+            if (!organization.getCreatedBy().equals(user)){
+                throw new CollectionAccessException("OrganizationRemoveAccessException");
             }
+            System.out.println(1);
             collectionManager.removeFromCollection(organization);
-            ResponseOutputer.appendln("Organization deleted successfully");
+            ResponseOutputer.append("OrganizationWasRemoved");
+            collectionManager.loadCollection();
             return true;
         } catch (WrongAmountOfElementsException exception) {
-            ResponseOutputer.appendln("Usage: '" + getName() + " " + getUsage() + "'");
+            ResponseOutputer.append("Using");
+            ResponseOutputer.appendargs(getName() + " " + getUsage());
         } catch (CollectionIsEmptyException exception) {
-            ResponseOutputer.appenderror("Collection is empty");
+            ResponseOutputer.appenderror("CollectionIsEmptyException");
         } catch (InvalidObjectFieldException exception) {
-            ResponseOutputer.appenderror("ID must be represented by a number!");
+            ResponseOutputer.appenderror("IDMustBeInteger");
         } catch (OrganizationNotFoundException exception) {
-            ResponseOutputer.appenderror("There is no organization with this ID in the collection!");
+            ResponseOutputer.appenderror("OrganizationNotFoundException");
         } catch (CollectionAccessException e) {
-            ResponseOutputer.appendln(e.getMessage());
+            ResponseOutputer.append(e.getMessage());
         }  catch (SQLException | ConnectionErrorException e) {
-            ResponseOutputer.appendln("Server error, try again later");
+            ResponseOutputer.append("DatabaseHandlingException");
+            if (!e.getMessage().isEmpty()){
+                ResponseOutputer.appendargs(e.getMessage());
+            }
         }
         return false;
     }

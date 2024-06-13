@@ -1,10 +1,11 @@
-package laba7.server.commands;
+package laba8.laba8.server.commands;
 
-import laba7.common.data.User;
-import laba7.common.exeptions.ConnectionErrorException;
-import laba7.common.exeptions.WrongAmountOfElementsException;
-import laba7.server.modules.CollectionManager;
-import laba7.server.modules.ResponseOutputer;
+import laba8.laba8.common.data.User;
+import laba8.laba8.common.exeptions.ConnectionErrorException;
+import laba8.laba8.common.exeptions.UserNotFoundException;
+import laba8.laba8.common.exeptions.WrongAmountOfElementsException;
+import laba8.laba8.server.modules.CollectionManager;
+import laba8.laba8.server.modules.ResponseOutputer;
 
 import java.sql.SQLException;
 
@@ -27,14 +28,20 @@ public class ClearCommand extends AbstractCommand {
         try {
             if (!stringArgument.isEmpty() || objectArgument != null) throw new WrongAmountOfElementsException();
             collectionManager.clearCollection(user);
-            ResponseOutputer.appendln("Collection cleared!");
+            ResponseOutputer.append("CollectionCleared");
+            collectionManager.loadCollection();
             return true;
         } catch (WrongAmountOfElementsException exception) {
-            ResponseOutputer.appendln("Usage: '" + getName() + " " + getUsage() + "'");
-        } catch (SQLException e){
-            ResponseOutputer.appendln("Database server error, sorry, try again later...");
-        } catch (ConnectionErrorException e) {
-            ResponseOutputer.appendln("Server error, try again later");
+            ResponseOutputer.append("Using");
+            ResponseOutputer.appendargs(getName() + " " + getUsage());
+        } catch (SQLException | ConnectionErrorException e){
+            ResponseOutputer.append("DatabaseHandlingException");
+            if (!e.getMessage().isEmpty()){
+                ResponseOutputer.appendargs(e.getMessage());
+            }
+        } catch (UserNotFoundException e){
+            ResponseOutputer.append("UserNotFoundException");
+
         }
         return false;
     }

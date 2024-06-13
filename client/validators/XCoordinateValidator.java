@@ -1,6 +1,6 @@
-package laba7.client.validators;
+package laba8.laba8.client.validators;
 
-import laba7.common.exeptions.InvalidObjectFieldException;
+import laba8.laba8.common.exeptions.InvalidObjectFieldException;
 
 public class XCoordinateValidator extends Validator<Integer> {
     @Override
@@ -8,11 +8,11 @@ public class XCoordinateValidator extends Validator<Integer> {
         try{
             int x = Integer.parseInt(value);
             if (x<=-393){
-                throw new InvalidObjectFieldException("X-coordinate must be > -393");
+                throw new InvalidObjectFieldException("XCoordinateLimitsException");
             }
             return x;
         } catch (NumberFormatException e){
-            throw new InvalidObjectFieldException("X-coordinate defined incorrectly");
+            throw new InvalidObjectFieldException("XCoordinateMustBeInteger");
         }
 
 

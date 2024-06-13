@@ -1,4 +1,4 @@
-package laba7.common.data;
+package laba8.laba8.common.data;
 
 import java.util.HashMap;
 
@@ -18,7 +18,7 @@ public enum OrganizationType {
                 }
             }
         }
-        throw new IllegalArgumentException("There are no such organization type!");
+        throw new IllegalArgumentException("NoSuchOrganizationType");
     }
 
     public static Integer getId(OrganizationType organizationType){

@@ -1,9 +1,9 @@
-package laba7.server;
+package laba8.laba8.server;
 
-import laba7.common.exeptions.ConnectionErrorException;
-import laba7.server.modules.CollectionManager;
-import laba7.server.modules.CommandManager;
-import laba7.server.modules.DatabaseManager;
+import laba8.laba8.common.exeptions.ConnectionErrorException;
+import laba8.laba8.server.modules.CollectionManager;
+import laba8.laba8.server.modules.CommandManager;
+import laba8.laba8.server.modules.DatabaseManager;
 
 import java.io.IOException;
 import java.sql.SQLException;

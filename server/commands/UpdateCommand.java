@@ -1,12 +1,12 @@
-package laba7.server.commands;
+package laba8.laba8.server.commands;
 
-import laba7.client.validators.IDValidator;
-import laba7.common.data.Organization;
-import laba7.common.data.User;
-import laba7.common.exeptions.*;
-import laba7.server.modules.CollectionManager;
-import laba7.server.modules.DatabaseManager;
-import laba7.server.modules.ResponseOutputer;
+import laba8.laba8.client.validators.IDValidator;
+import laba8.laba8.common.data.Organization;
+import laba8.laba8.common.data.User;
+import laba8.laba8.common.exeptions.*;
+import laba8.laba8.server.modules.CollectionManager;
+import laba8.laba8.server.modules.DatabaseManager;
+import laba8.laba8.server.modules.ResponseOutputer;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -30,13 +30,12 @@ public class UpdateCommand extends AbstractCommand {
         try {
             if (stringArgument.isEmpty() || objectArgument == null) throw new WrongAmountOfElementsException();
             if (collectionManager.collectionSize() == 0) throw new CollectionIsEmptyException();
-
             IDValidator idValidator = new IDValidator();
             Integer id = idValidator.validate(stringArgument);
             if (id <= 0) throw new NumberFormatException();
             Organization oldOrganization = collectionManager.getById(id);
             if (oldOrganization == null) throw new OrganizationNotFoundException();
-            if (oldOrganization.getCreatedBy() != user){
+            if (!oldOrganization.getCreatedBy().equals(user)){
                 throw new CollectionAccessException("You are not owner of this organization and not allowed to update it!");
             }
             Organization organization = (Organization) objectArgument;
@@ -50,22 +49,27 @@ public class UpdateCommand extends AbstractCommand {
             oldOrganization.setType(organization.getType());
             oldOrganization.setOfficialAddress(organization.getOfficialAddress());
 
-            ResponseOutputer.appendln("The organization has been successfully changed!");
+            ResponseOutputer.append("OrganizationWasUpdated");
+            collectionManager.loadCollection();
             return true;
         } catch (WrongAmountOfElementsException exception) {
-            ResponseOutputer.appendln("Usage: '" + getName() + " " + getUsage() + "'");
+            ResponseOutputer.append("Using");
+            ResponseOutputer.appendargs(getName() + " " + getUsage());
         } catch (CollectionIsEmptyException exception) {
-            ResponseOutputer.appenderror("The collection is empty!");
+            ResponseOutputer.appenderror("CollectionIsEmptyException");
         } catch (InvalidObjectFieldException exception) {
-            ResponseOutputer.appenderror("ID must be represented as a positive number!");
+            ResponseOutputer.appenderror("IDMustBeInteger");
         } catch (OrganizationNotFoundException exception) {
-            ResponseOutputer.appenderror("There is no soldier with this ID in the collection!");
+            ResponseOutputer.appenderror("OrganizationNotFoundException");
         } catch (ClassCastException exception) {
-            ResponseOutputer.appenderror("The object passed by the client is invalid!");
+            ResponseOutputer.appenderror("ClientObjectException");
         } catch (CollectionAccessException e) {
-            ResponseOutputer.appendln(e.getMessage());
+            ResponseOutputer.append(e.getMessage());
         }  catch (SQLException | ConnectionErrorException e) {
-            ResponseOutputer.appendln("Server error, try again later");
+            ResponseOutputer.append("DatabaseHandlingException");
+            if (!e.getMessage().isEmpty()){
+                ResponseOutputer.appendargs(e.getMessage());
+            }
         }
         return false;
     }

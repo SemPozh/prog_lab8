@@ -1,6 +1,6 @@
-package laba7.server.modules;
+package laba8.laba8.server.modules;
 
-import laba7.server.App;
+import laba8.laba8.server.App;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;

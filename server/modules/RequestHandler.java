@@ -1,11 +1,11 @@
-package laba7.server.modules;
+package laba8.laba8.server.modules;
 
 
-import laba7.common.data.User;
-import laba7.common.interaction.Request;
-import laba7.common.interaction.Response;
-import laba7.common.interaction.ResponseCode;
-import laba7.server.commands.Command;
+import laba8.laba8.common.data.User;
+import laba8.laba8.common.interaction.Request;
+import laba8.laba8.common.interaction.Response;
+import laba8.laba8.common.interaction.ResponseCode;
+import laba8.laba8.server.commands.Command;
 
 import java.util.HashMap;
 import java.util.concurrent.RecursiveTask;
@@ -32,7 +32,7 @@ public class RequestHandler extends RecursiveTask<Response> {
         User hashedUser = request.getUser();
         ResponseCode responseCode = executeCommand(request.getCommandName(), request.getCommandStringArgument(),
                 request.getCommandObjectArgument(), hashedUser);
-        return new Response(responseCode, ResponseOutputer.getAndClear());
+        return new Response(responseCode, ResponseOutputer.getAndClear(), collectionManager.getOrganizationCollection(), ResponseOutputer.getArgsAndClear());
     }
     /**
      * Executes a command from a request.
@@ -49,7 +49,7 @@ public class RequestHandler extends RecursiveTask<Response> {
         Command command = commands.get(commandName).getCommand();
 
         if (command==null){
-            ResponseOutputer.appendln("Command '" + commandName + "' not found. Type 'help' for help.");
+            ResponseOutputer.append("CommandNotFoundException");
             return ResponseCode.ERROR;
         }
         if (command.execute(commandStringArgument, commandObjectArgument, collectionManager, user)){

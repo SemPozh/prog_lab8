@@ -1,7 +1,7 @@
-package laba7.client.validators;
+package laba8.laba8.client.validators;
 
-import laba7.common.data.OrganizationType;
-import laba7.common.exeptions.InvalidObjectFieldException;
+import laba8.laba8.common.data.OrganizationType;
+import laba8.laba8.common.exeptions.InvalidObjectFieldException;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -16,8 +16,7 @@ public class CreationDateValidator extends Validator<ZonedDateTime> {
             LocalDate date = LocalDate.parse(value, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
             return date.atStartOfDay(ZoneId.systemDefault());
         } catch (DateTimeParseException e){
-            System.out.println(e);
-            throw new InvalidObjectFieldException("Invalid creation date");
+            throw new InvalidObjectFieldException("InvalidCreationDate");
         }
     }
 }

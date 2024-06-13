@@ -1,7 +1,7 @@
-package laba7.server.modules;
+package laba8.laba8.server.modules;
 
-import laba7.client.modules.ProcessingCode;
-import laba7.server.commands.*;
+import laba8.laba8.client.modules.ProcessingCode;
+import laba8.laba8.server.commands.*;
 
 import java.util.HashMap;
 
@@ -24,8 +24,9 @@ public class CommandManager {
         this.commands.put("remove_by_id", new ServerCommandType(ProcessingCode.OK, 1, "remove_by_id <ID>", new RemoveByIdCommand()));
         this.commands.put("execute_script", new ServerCommandType(ProcessingCode.SCRIPT, 1, "execute_script <file name>", new ExecuteScriptCommand()));
         this.commands.put("insert_at", new ServerCommandType(ProcessingCode.OBJECT, 1, "insert_at <ID> {element}", new InsertAtCommand()));
-        this.commands.put("authorization", new ServerCommandType(ProcessingCode.OK, 0, "authorization", new Authorization()));
-        this.commands.put("registration", new ServerCommandType(ProcessingCode.OK, 0, "registration", new Registration()));
+        this.commands.put("login", new ServerCommandType(ProcessingCode.OK, 0, "authorization", new Login()));
+        this.commands.put("register", new ServerCommandType(ProcessingCode.OK, 0, "registration", new Registration()));
+        this.commands.put("refresh", new ServerCommandType(ProcessingCode.OK, 0, "refresh", new RefreshCommand()));
     }
 
     public HashMap<String, ServerCommandType> getCommands() {
